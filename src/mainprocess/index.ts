@@ -1,10 +1,13 @@
-import { BrowserWindow, App, app } from "electron";
+import { BrowserWindow, App, app, Menu } from "electron";
+import ParseString from "./ParseString";
+import config from "../../config.json";
+import menuTemplate from "./MenuTemplate";
 
 class MyApp {
   private window?: BrowserWindow;
   private app: App;
 
-  private mainURL: string = `https://studio.youtube.com/channel/UCn9PQpGGbbcoq82TLnXYK5Q/livestreaming/stream`;
+  private mainURL: string = ParseString(config.firstView, config);
 
   constructor(app: App) {
     this.app = app;
@@ -14,6 +17,8 @@ class MyApp {
   }
 
   private onReady = () => {
+    Menu.setApplicationMenu(menuTemplate);
+
     const windowOption = {
       title: "YoutubeLiveApp",
       acceptForstMouse: true,
