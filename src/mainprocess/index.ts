@@ -32,7 +32,6 @@ class MyApp {
 
     this.window = new BrowserWindow(windowOption);
     this.window.loadURL(this.mainURL);
-    this.window.webContents.openDevTools();
   };
   private onActivated = () => {};
   private onWindowAllClosed = () => {
