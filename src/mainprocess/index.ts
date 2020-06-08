@@ -4,7 +4,7 @@ class MyApp {
   private window?: BrowserWindow;
   private app: App;
 
-  private mainURL: string = `file://${__dirname}/index.html`;
+  private mainURL: string = `https://studio.youtube.com/channel/UCn9PQpGGbbcoq82TLnXYK5Q/livestreaming/stream`;
 
   constructor(app: App) {
     this.app = app;
@@ -14,7 +14,18 @@ class MyApp {
   }
 
   private onReady = () => {
-    this.window = new BrowserWindow();
+    const windowOption = {
+      title: "YoutubeLiveApp",
+      acceptForstMouse: true,
+      alwaysOnTop: true,
+      width: 1400,
+      height: 900,
+      webReferences: {
+        nodeIntegration: true,
+      },
+    };
+
+    this.window = new BrowserWindow(windowOption);
     this.window.loadURL(this.mainURL);
     this.window.webContents.openDevTools();
   };
