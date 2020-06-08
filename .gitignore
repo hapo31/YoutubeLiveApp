@@ -1,0 +1,6 @@
+node_modules
+dist
+yarn-error.log
+TAKE-win32-x64
+config.json
+*.zip
