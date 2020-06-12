@@ -29,6 +29,19 @@ const menuTemplate = [
       },
     ],
   },
+  {
+    label: "困ったとき",
+    submenu: [
+      {
+        label: "開発者ツールを開く",
+        click: (__item: any, focusedWindow?: BrowserWindow) => {
+          if (focusedWindow) {
+            focusedWindow.webContents.openDevTools();
+          }
+        },
+      },
+    ],
+  },
 ];
 
 export default Menu.buildFromTemplate(menuTemplate);

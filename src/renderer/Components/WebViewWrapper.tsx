@@ -5,8 +5,8 @@ type Props = {
 };
 
 const style: CSSProperties = {
-  width: "100%",
-  height: "100%",
+  width: "100vw",
+  height: "100vh",
 };
 
 export default (props: Props) => <webview style={style} src={props.url} />;

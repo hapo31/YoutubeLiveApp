@@ -7,7 +7,9 @@ class MyApp {
   private window?: BrowserWindow;
   private app: App;
 
-  private mainURL: string = ParseString(config.firstView, config);
+  private mainURL: string = `file://${__dirname}/index.html?n=${encodeURIComponent(
+    ParseString(config.firstView, config)
+  )}`;
 
   constructor(app: App) {
     this.app = app;
@@ -19,14 +21,14 @@ class MyApp {
   private onReady = () => {
     Menu.setApplicationMenu(menuTemplate);
 
-    const windowOption = {
+    const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YoutubeLiveApp",
-      acceptForstMouse: true,
+      acceptFirstMouse: true,
       alwaysOnTop: true,
       width: 1400,
       height: 900,
-      webReferences: {
-        nodeIntegration: true,
+      webPreferences: {
+        webviewTag: true,
       },
     };
 

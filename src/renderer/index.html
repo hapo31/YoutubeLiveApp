@@ -4,11 +4,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #app {
+      height: 100vh;
+      width: 100vw;
+    }
+  </style>
+  <script>
+    window.ELECTRON_DISABLE_SECURITY_WARNINGS = 1;
+  </script>
   <title>title</title>
 </head>
 
 <body>
   <div id="app"></div>
+
   <script src="./scripts/index.js"></script>
 </body>
 
