@@ -8,11 +8,12 @@
     "start": "electron ./dist",
     "format": "eslint --fix ./src/**/*.{ts,tsx}",
     "dev": "webpack --watch --config ./webpack.config.js --mode development",
-    "build:win": "cross-env NODE_ENV=production webpack --config ./webpack.config.js --mode production && copy package.json dist\\ && electron-packager ./dist YoutubeLiveApp --platform=win32 --arch=x64 --icon=./images/icon.ico --electron-version=9.0.2 --overwrite"
+    "build:win": "cross-env NODE_ENV=production webpack --config ./webpack.config.js --mode production && cp package.json dist/ && electron-packager ./dist YoutubeLiveApp --platform=win32 --arch=x64 --icon=./images/icon.ico --electron-version=9.0.2 --overwrite"
   },
   "devDependencies": {
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
+    "@types/react-redux": "^7.1.9",
     "@typescript-eslint/eslint-plugin": "^3.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "copy-webpack-plugin": "^6.0.1",
