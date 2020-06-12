@@ -27,6 +27,8 @@ class MyApp {
       alwaysOnTop: true,
       width: 1400,
       height: 900,
+      minWidth: 1400,
+      minHeight: 900,
       webPreferences: {
         webviewTag: true,
       },

@@ -8,12 +8,12 @@ import createAppReducer from "./Reducers/AppStateReducer";
 import IndexContainer from "./Container/IndexContainer";
 
 const locationHref = location.href;
+const beforeLivePage = localStorage.getItem("beforeLivePage");
 
-const firstView: string = decodeURIComponent(
-  locationHref.slice(locationHref.indexOf("n=") + 2)
-);
-
-console.log({ locationHref, firstView });
+const firstView: string =
+  beforeLivePage !== null
+    ? beforeLivePage
+    : decodeURIComponent(locationHref.slice(locationHref.indexOf("n=") + 2));
 
 const store = createStore(createAppReducer({ url: firstView }));
 

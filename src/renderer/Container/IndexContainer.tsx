@@ -1,6 +1,6 @@
 import React from "react";
 
-import IFrameWrapper from "../Components/WebViewWrapper";
+import WebViewWrapper from "../Components/WebViewWrapper";
 import { useSelector } from "react-redux";
 import AppState from "../States/AppState";
 
@@ -9,5 +9,5 @@ export default () => {
 
   console.log(state);
 
-  return <IFrameWrapper url={state.url} />;
+  return <WebViewWrapper url={state.url} />;
 };
