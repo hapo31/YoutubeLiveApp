@@ -16,6 +16,7 @@
   </style>
   <script>
     window.ELECTRON_DISABLE_SECURITY_WARNINGS = 1;
+    document.body.onclose(() => localStorage.setItem("beforeLivePage", props.url));
   </script>
 </head>
 

@@ -9,7 +9,7 @@ var main = {
   mode: isDev ? "development" : "production",
   target: "electron-main",
   devtool: isDev ? "source-map" : false,
-  entry: path.join(__dirname, "src", "mainprocess", "index"),
+  entry: path.join(__dirname, "src", "mainprocess", "App"),
   output: {
     filename: "index.js",
     path: outputPath,
@@ -45,7 +45,7 @@ var main = {
 var renderer = {
   mode: isDev ? "development" : "production",
   target: "electron-renderer",
-  entry: path.join(__dirname, "src", "renderer", "index"),
+  entry: path.join(__dirname, "src", "renderer", "App"),
   devtool: isDev ? "inline-source-map" : false,
   output: {
     filename: "index.js",

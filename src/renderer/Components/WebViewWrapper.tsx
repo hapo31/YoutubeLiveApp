@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, useEffect, useRef } from "react";
 
 type Props = {
   url: string;
@@ -9,4 +9,14 @@ const style: CSSProperties = {
   height: "100vh",
 };
 
-export default (props: Props) => <webview style={style} src={props.url} />;
+export default (props: Props) => {
+  const webviewRef = useRef<HTMLWebViewElement>(null);
+
+  useEffect(() => {
+    return () => {
+      localStorage.setItem("beforeLivePage", props.url);
+    };
+  });
+
+  return <webview ref={webviewRef} style={style} src={props.url} />;
+};
