@@ -1,4 +1,5 @@
-import { BrowserWindow, App, app, Menu } from "electron";
+import { BrowserWindow, App, app, Menu, ipcMain } from "electron";
+import fs from "fs";
 import ParseString from "./ParseString";
 import config from "../../config.json";
 import menuTemplate from "./MenuTemplate";
@@ -36,6 +37,14 @@ class MyApp {
 
     this.window = new BrowserWindow(windowOption);
     this.window.loadURL(this.mainURL);
+    this.window.webContents.openDevTools();
+
+    ipcMain.on("DEBUG.SHOW_LOG", (_, args) => {
+      console.log(`DEBUG.SHOW_LOG: ${args}`);
+    });
+    ipcMain.on("DEBUG.ERROR_LOG", (_, args) => {
+      console.error(`DEBUG.ERROR_LOG: ${args}`);
+    });
   };
   private onActivated = () => {};
   private onWindowAllClosed = () => {
