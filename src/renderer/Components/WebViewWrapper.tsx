@@ -18,12 +18,5 @@ export default (props: Props) => {
     };
   });
 
-  return (
-    <webview
-      ref={webviewRef}
-      style={style}
-      src={props.url}
-      preload="./scripts/preload.js"
-    />
-  );
+  return <webview ref={webviewRef} style={style} src={props.url} preload="./scripts/preload.js" />;
 };

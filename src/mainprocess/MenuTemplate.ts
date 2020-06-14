@@ -8,22 +8,18 @@ const menuTemplate = [
       {
         label: "ライブ配信 - Youtube Studio(Ctrl+1)",
         accelerator: "CmdOrCtrl+1",
-        click: (__item: any, focusedWindow?: BrowserWindow) => {
+        click: (__item: unknown, focusedWindow?: BrowserWindow) => {
           if (focusedWindow) {
-            focusedWindow.loadURL(
-              `https://studio.youtube.com/channel/${config.channelId}/livestreaming/stream`
-            );
+            focusedWindow.loadURL(`https://studio.youtube.com/channel/${config.channelId}/livestreaming/stream`);
           }
         },
       },
       {
         label: "チャンネルのダッシュボード(Ctrl+2)",
         accelerator: "CmdOrCtrl+2",
-        click: (__item: any, focusedWindow?: BrowserWindow) => {
+        click: (__item: unknown, focusedWindow?: BrowserWindow) => {
           if (focusedWindow) {
-            focusedWindow.loadURL(
-              `https://studio.youtube.com/channel/${config.channelId}/`
-            );
+            focusedWindow.loadURL(`https://studio.youtube.com/channel/${config.channelId}/`);
           }
         },
       },
@@ -34,7 +30,7 @@ const menuTemplate = [
     submenu: [
       {
         label: "開発者ツールを開く",
-        click: (__item: any, focusedWindow?: BrowserWindow) => {
+        click: (__item: unknown, focusedWindow?: BrowserWindow) => {
           if (focusedWindow) {
             focusedWindow.webContents.openDevTools();
           }

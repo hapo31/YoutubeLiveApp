@@ -13,14 +13,9 @@ import IndexContainer from "./Container/IndexContainer";
 const locationHref = location.href;
 const beforeLivePage = localStorage.getItem("beforeLivePage");
 
-const firstView: string =
-  beforeLivePage != null
-    ? beforeLivePage
-    : decodeURIComponent(locationHref.slice(locationHref.indexOf("n=") + 2));
+const firstView: string = beforeLivePage != null ? beforeLivePage : decodeURIComponent(locationHref.slice(locationHref.indexOf("n=") + 2));
 
-const myCreateStore = compose(applyMiddleware(RendererProcessMiddleware()))(
-  createStore
-);
+const myCreateStore = compose(applyMiddleware(RendererProcessMiddleware()))(createStore);
 const store = myCreateStore(createAppReducer({ url: firstView }));
 
 const app = (

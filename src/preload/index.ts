@@ -32,6 +32,4 @@ function init() {
   }
 }
 
-function extractChat() {}
-
 init();

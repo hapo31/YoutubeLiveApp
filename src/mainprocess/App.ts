@@ -12,19 +12,13 @@ class MyApp {
   public windows: BrowserWindow[] = [];
   private app: App;
 
-  private mainURL: string = `file://${__dirname}/index.html?n=${encodeURIComponent(
-    ParseString(config.firstView, config)
-  )}`;
+  private mainURL = `file://${__dirname}/index.html?n=${encodeURIComponent(ParseString(config.firstView, config))}`;
 
   constructor(app: App) {
     this.app = app;
-    const myCreateStore: StoreCreator = compose(
-      applyMiddleware(MainProcessMiddleware())
-    )(createStore);
+    const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
-    this.appStore = myCreateStore(
-      createAppReducer({ url: ParseString(config.firstView, config) })
-    );
+    this.appStore = myCreateStore(createAppReducer({ url: ParseString(config.firstView, config) }));
     this.app = this.app.on("ready", this.onReady);
     this.app.on("activate", this.onActivated);
     this.app.on("window-all-closed", this.onWindowAllClosed);
@@ -47,12 +41,12 @@ class MyApp {
       },
     };
 
-    ipcMain.on("stateChanged", (_, data: string) => {});
-
     this.windows.push(new BrowserWindow(windowOption));
     this.windows.forEach((window) => window.loadURL(this.mainURL));
   };
-  private onActivated = () => {};
+  private onActivated = () => {
+    console.log("Activated");
+  };
   private onWindowAllClosed = () => {
     this.app.quit();
   };
