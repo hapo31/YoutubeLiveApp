@@ -42,6 +42,35 @@ var main = {
   ],
 };
 
+var preload = {
+  mode: isDev ? "development" : "production",
+  target: "electron-renderer",
+  devtool: isDev ? "source-map" : false,
+  entry: path.join(__dirname, "src", "preload", "index"),
+  output: {
+    filename: "preload.js",
+    path: path.resolve(outputPath, "scripts"),
+  },
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+  module: {
+    rules: [
+      {
+        test: /.ts?$/,
+        include: [path.resolve(__dirname, "src")],
+        exclude: [path.resolve(__dirname, "node_modules")],
+        loader: "ts-loader",
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".js", ".ts"],
+  },
+  plugins: [],
+};
+
 var renderer = {
   mode: isDev ? "development" : "production",
   target: "electron-renderer",
@@ -69,4 +98,4 @@ var renderer = {
   plugins: [],
 };
 
-module.exports = [main, renderer];
+module.exports = [main, renderer, preload];
