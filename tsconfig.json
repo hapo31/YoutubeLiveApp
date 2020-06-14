@@ -43,6 +43,7 @@
     "paths": {
       "@root/*": ["*"],
       "@common/*": ["./src/common/*"],
+      "@events/*": ["./src/common/events/*"],
       "@mainprocess/*": ["./src/mainprocess/*"],
       "@renderer/*": ["./src/renderer/*"]
     } /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */,

@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
   env: {
     browser: true,
@@ -9,6 +10,7 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
     "prettier/@typescript-eslint",
+    "eslint-config-prettier",
   ],
   globals: {
     Atomics: "readonly",
@@ -22,14 +24,18 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "prettier"],
+  ignorePatterns: ["./.eslintrc.js"],
   rules: {
+    "max-len": ["error", { code: 180 }],
     "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "prettier/prettier": [
-      "error",
+      "warn",
       {
+        printWidth: 180,
         singleQuote: false,
         semi: true,
         tabWidth: 2,
