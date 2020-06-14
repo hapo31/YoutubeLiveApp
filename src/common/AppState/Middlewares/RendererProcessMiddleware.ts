@@ -1,13 +1,10 @@
 import { Middleware, Action } from "redux";
 import { ipcRenderer } from "electron";
 import AppState from "../States/AppState";
-export default function RendererProcessMiddleware(): Middleware<
-  unknown,
-  unknown,
-  any
-> {
+import IPCEvent from "../../events/IPCEvent";
+export default function RendererProcessMiddleware(): Middleware {
   return (store) => (next) => (action: Action) => {
-    if (!ipcRenderer.eventNames().some((name) => name === "stateChanged")) {
+    if (!ipcRenderer.eventNames().some((name) => name === IPCEvent.StateChanged.CHANNEL_NAME_FROM_RENDERER)) {
       ipcRenderer.addListener("stateChanged", (_, action: Action) => {
         next(action);
       });
@@ -20,7 +17,7 @@ export default function RendererProcessMiddleware(): Middleware<
 
 async function getInitialState() {
   return new Promise<AppState>((res, error) => {
-    ipcRenderer.on("INITIAL_STATE.RESPONSE", (_, payload: AppState) => {
+    ipcRenderer.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, (_, payload: AppState) => {
       res(payload);
     });
 
