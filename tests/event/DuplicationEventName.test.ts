@@ -9,12 +9,7 @@ import {
   CHANNEL_NAME_FROM_RENDERER as rendererInitialStateEventName,
 } from "@events/InitialStateEvent";
 
-const eventNameList = [
-  mainStateChangedEventName,
-  rendererStateChangedEventName,
-  mainInitialStateEventName,
-  rendererInitialStateEventName,
-];
+const eventNameList = [mainStateChangedEventName, rendererStateChangedEventName, mainInitialStateEventName, rendererInitialStateEventName];
 
 describe(__filename, () => {
   it("イベント名に重複がないかをチェケラ", () => {

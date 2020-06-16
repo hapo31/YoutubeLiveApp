@@ -27,7 +27,6 @@ module.exports = {
   plugins: ["react", "@typescript-eslint", "prettier"],
   ignorePatterns: ["./.eslintrc.js"],
   rules: {
-    "max-len": ["error", { code: 180 }],
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -35,7 +34,7 @@ module.exports = {
     "prettier/prettier": [
       "warn",
       {
-        printWidth: 180,
+        printWidth: 150,
         singleQuote: false,
         semi: true,
         tabWidth: 2,
