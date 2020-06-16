@@ -1,8 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import {} from "electron-redux";
-
 import { createStore, compose, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 
