@@ -18,7 +18,10 @@ export default function MainProcessMiddleware(): Middleware {
       ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_RENDERER, (_, data: EventType<AppState>) => {
         const state = store.getState();
         App.windows.forEach((window) =>
-          window.webContents.send(IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN, { type: IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, payload: state })
+          window.webContents.send(IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN, {
+            type: IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN,
+            payload: state,
+          })
         );
       });
     }
