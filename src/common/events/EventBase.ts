@@ -13,9 +13,9 @@ export type EventType<T> = {
  * // 例
  namespace InitialStateEvent {
     // レンダラーが送信するチャンネル名を定義する
-    export const CHANNEL_NAME_RENDERER = "RENDERER.REQUEST_INITIAL_STATE";
+    export const CHANNEL_NAME_FROM_RENDERER = "RENDERER.REQUEST_INITIAL_STATE";
     // メインプロセスが送信するチャンネル名を定義する
-    export const CHANNEL_NAME_MAIN = "MAIN.RESPONSE_INITIAL_STATE";
+    export const CHANNEL_NAME_FROM_MAIN = "MAIN.RESPONSE_INITIAL_STATE";
     // ipcXXX.send で 第2引数に渡すPayloadの型を定義。EventType<T> を使う
     export type EventPayload = EventType<AppState>;
  }
