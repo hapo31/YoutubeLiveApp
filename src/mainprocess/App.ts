@@ -1,10 +1,10 @@
 import { BrowserWindow, App, app, Menu, ipcMain } from "electron";
 import ParseString from "./ParseString";
-import config from "@root/config.json";
+import config from "@src/../config.json";
 import menuTemplate from "./MenuTemplate";
 import { compose, applyMiddleware, createStore, StoreCreator } from "redux";
-import MainProcessMiddleware from "@common/AppState/Middlewares/MainProcessMiddleware";
-import createAppReducer from "@common/AppState/Reducers/AppStateReducer";
+import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
+import createAppReducer from "@common/AppState/AppStateReducer";
 
 class MyApp {
   private appStore: ReturnType<typeof createStore>;

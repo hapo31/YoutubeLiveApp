@@ -1,5 +1,5 @@
-import * as AppStateAction from "../Actions/AppStateAction";
-import AppState from "../States/AppState";
+import * as AppStateAction from "./Actions/AppStateAction";
+import AppState from "./AppState";
 
 export default function createAppReducer(initialState: AppState) {
   return (state = initialState, action: AppStateAction.Actions) => {

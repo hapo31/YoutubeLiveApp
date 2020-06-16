@@ -2,6 +2,7 @@
 {
   "env": {
     "browser": true,
+    "node": true,
     "es6": true
   },
   "extends": [
@@ -31,7 +32,8 @@
   ],
   "ignorePatterns": [
     "./.eslintrc.js",
-    "./**/.eslintrc.js"
+    "./**/.eslintrc.js",
+    "./*.config.js"
   ],
   "rules": {
     "@typescript-eslint/no-unused-vars": "off",

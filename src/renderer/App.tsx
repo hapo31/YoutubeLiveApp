@@ -4,8 +4,8 @@ import ReactDOM from "react-dom";
 import { createStore, compose, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 
-import createAppReducer from "@common/AppState/Reducers/AppStateReducer";
-import RendererProcessMiddleware from "@root/src/common/AppState/Middlewares/RendererProcessMiddleware";
+import createAppReducer from "@common/AppState/AppStateReducer";
+import RendererProcessMiddleware from "@common/Middlewares/RendererProcessMiddleware";
 import IndexContainer from "./Container/IndexContainer";
 
 const locationHref = location.href;

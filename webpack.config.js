@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
@@ -88,10 +89,7 @@ var renderer = {
       {
         test: /\.(tsx|ts)$/,
         use: ["ts-loader"],
-        include: [
-          path.resolve(__dirname, "src"),
-          path.resolve(__dirname, "node_modules"),
-        ],
+        include: [path.resolve(__dirname, "src"), path.resolve(__dirname, "node_modules")],
       },
     ],
   },

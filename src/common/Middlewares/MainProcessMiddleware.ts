@@ -3,8 +3,8 @@ import { ipcMain, app } from "electron";
 import App from "@mainprocess/App";
 
 import IPCEvent from "@events/IPCEvent";
-import { EventType } from "../../events/EventBase";
-import AppState from "../States/AppState";
+import { EventType } from "../events/EventBase";
+import AppState from "../AppState/AppState";
 
 export default function MainProcessMiddleware(): Middleware {
   return (store) => (next) => (action: Action) => {
