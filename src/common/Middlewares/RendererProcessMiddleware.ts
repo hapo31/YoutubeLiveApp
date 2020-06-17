@@ -5,22 +5,22 @@ import IPCEvent from "@events/IPCEvent";
 export default function RendererProcessMiddleware(): Middleware {
   return (store) => (next) => (action: Action) => {
     if (!ipcRenderer.eventNames().some((name) => name === IPCEvent.StateChanged.CHANNEL_NAME_FROM_RENDERER)) {
-      ipcRenderer.addListener("stateChanged", (_, action: Action) => {
+      ipcRenderer.addListener(IPCEvent.StateChanged.CHANNEL_NAME_FROM_RENDERER, (_, action: Action) => {
         next(action);
       });
     }
     next(action);
-    const state = store.getState();
-    ipcRenderer.send("stateChanged", { type: action.type, state });
+    ipcRenderer.send(IPCEvent.StateChanged.CHANNEL_NAME_FROM_RENDERER, action);
+    console.log(`state changed:${JSON.stringify(store.getState())}`);
   };
 }
 
-async function getInitialState() {
+export async function requestInitialState() {
   return new Promise<AppState>((res, error) => {
     ipcRenderer.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, (_, payload: AppState) => {
       res(payload);
     });
 
-    ipcRenderer.send("INITIAL_STATE.REQUEST");
+    ipcRenderer.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_RENDERER);
   });
 }
