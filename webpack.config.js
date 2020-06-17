@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const webpack = require("webpack");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
 const isDev = process.env.NODE_ENV !== "production";
+const fs = require("fs");
+/* eslint-enable */
 
-const outputPath = path.join(__dirname, "dist");
+const outputPath = path.resolve(__dirname, "dist");
+const tsconfigPath = path.resolve(__dirname, "./tsconfig.json");
+const resolveExt = [".json", ".js", ".jsx", ".css", ".ts", ".tsx"];
 
 var main = {
   mode: isDev ? "development" : "production",
@@ -30,7 +34,8 @@ var main = {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts"],
+    extensions: resolveExt,
+    plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
   },
   plugins: [
     new CopyWebpackPlugin({
@@ -67,7 +72,8 @@ var preload = {
     ],
   },
   resolve: {
-    extensions: [".js", ".ts"],
+    extensions: resolveExt,
+    plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
   },
   plugins: [],
 };
@@ -82,7 +88,8 @@ var renderer = {
     path: path.resolve(outputPath, "scripts"),
   },
   resolve: {
-    extensions: [".json", ".js", ".jsx", ".css", ".ts", ".tsx"],
+    extensions: resolveExt,
+    plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
   },
   module: {
     rules: [
