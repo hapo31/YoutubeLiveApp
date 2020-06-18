@@ -50,7 +50,7 @@ var main = {
 
 var preload = {
   mode: isDev ? "development" : "production",
-  target: "electron-renderer",
+  target: "electron-preload",
   devtool: isDev ? "source-map" : false,
   entry: path.join(__dirname, "src", "preload", "index"),
   output: {
@@ -78,29 +78,34 @@ var preload = {
   plugins: [],
 };
 
-var renderer = {
+var chatbox = {
   mode: isDev ? "development" : "production",
-  target: "electron-renderer",
-  entry: path.join(__dirname, "src", "renderer", "App"),
-  devtool: isDev ? "inline-source-map" : false,
+  target: "electron-preload",
+  devtool: isDev ? "source-map" : false,
+  entry: path.join(__dirname, "src", "preload", "chatbox"),
   output: {
-    filename: "index.js",
+    filename: "chatbox.js",
     path: path.resolve(outputPath, "scripts"),
+  },
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+  module: {
+    rules: [
+      {
+        test: /.ts?$/,
+        include: [path.resolve(__dirname, "src")],
+        exclude: [path.resolve(__dirname, "node_modules")],
+        loader: "ts-loader",
+      },
+    ],
   },
   resolve: {
     extensions: resolveExt,
     plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
   },
-  module: {
-    rules: [
-      {
-        test: /\.(tsx|ts)$/,
-        use: ["ts-loader"],
-        include: [path.resolve(__dirname, "src"), path.resolve(__dirname, "node_modules")],
-      },
-    ],
-  },
   plugins: [],
 };
 
-module.exports = [main, renderer, preload];
+module.exports = [main, preload, chatbox];
