@@ -5,7 +5,7 @@ import { createStore, compose, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 
 import createAppReducer from "@common/AppState/AppStateReducer";
-import RendererProcessMiddleware, { requestInitialState } from "@common/Middlewares/RendererProcessMiddleware";
+import RendererProcessMiddleware, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
 import IndexContainer from "./Container/IndexContainer";
 
 const myCreateStore = compose(applyMiddleware(RendererProcessMiddleware()))(createStore);
