@@ -1,4 +1,5 @@
 {
+  "editor.formatOnSave": true,
   "eslint.enable": true,
   "eslint.codeActionsOnSave.mode": "problems",
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
