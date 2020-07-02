@@ -1,6 +1,5 @@
 import { BrowserWindow, App, app, Menu, ipcMain, WebContents } from "electron";
 import ParseString from "./ParseString";
-import config from "@src/../config.json";
 import menuTemplate from "./MenuTemplate";
 import { compose, applyMiddleware, createStore, StoreCreator, Action, Store } from "redux";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
@@ -9,13 +8,14 @@ import IPCEvent from "@common/events/IPCEvent";
 import { Actions as AppStateAction } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
 import createInitialState from "./getInitialState";
-import { readFileSync } from "fs";
+import { readFile, readFileSync } from "fs";
 import path from "path";
+import configParser from "./configParser";
 
 const isDebug = process.env.NODE_ENV == "development";
 
 class MyApp {
-  private appStore: Store<AppState, AppStateAction>;
+  private appStore?: Store<AppState, AppStateAction>;
 
   public window?: BrowserWindow;
   public chatBox?: BrowserWindow;
@@ -25,7 +25,11 @@ class MyApp {
   constructor(app: App) {
     const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
-    this.appStore = myCreateStore(createAppReducer(createInitialState(ParseString(config.firstView, config))));
+    const config = configParser("./config.json");
+
+    config.then((c) => {
+      this.appStore = myCreateStore(createAppReducer(createInitialState(c.channeId)));
+    });
 
     this.app = app;
     this.app = this.app.on("ready", this.onReady);
@@ -34,7 +38,10 @@ class MyApp {
   }
 
   private onReady = () => {
-    const state = this.appStore.getState();
+    const state = this.appStore?.getState();
+    if (!state) {
+      return;
+    }
 
     Menu.setApplicationMenu(menuTemplate);
 
@@ -53,11 +60,11 @@ class MyApp {
     };
 
     ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
-      event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore.getState());
+      event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore?.getState());
     });
     ipcMain.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action<AppState>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.appStore.dispatch(action as any);
+      this.appStore?.dispatch(action as any);
     });
 
     const preloadBasePath = isDebug ? "./dist/scripts/" : "/scripts/";
@@ -79,13 +86,13 @@ class MyApp {
         show: isDebug,
       });
 
-      this.chatBox.loadURL(url);
       this.chatBox.once("ready-to-show", () => {
         console.log("hpge");
         const chatboxJSCode = readFileSync(path.resolve(preloadBasePath, "chatbox.js")).toString("utf-8");
         console.log("Loaded chatbox.js");
         this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
       });
+      this.chatBox.loadURL(url);
 
       if (isDebug) {
         this.chatBox.webContents.openDevTools();
