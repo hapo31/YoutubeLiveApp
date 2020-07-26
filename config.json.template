@@ -1,4 +1,4 @@
 {
   "channelId": "[YourChannelID]",
-  "firstView": "https://studio.youtube.com/channel/%%channelId%%/livestreaming/stream"
+  "firstView": "create_stream"
 }
