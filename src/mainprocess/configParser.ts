@@ -1,23 +1,28 @@
-import { readFile } from "fs/promises";
+import { readFileSync } from "fs";
 
 type AppConfigRaw = {
-  channeId: string;
-  firstView: "recent" | "recent_stream" | "create_stream";
+  channelId: string;
+  firstView: "recent_stream" | "create_stream";
 };
-type AppConfig = {
-  channeId: string;
+export type AppConfig = {
+  channelId: string;
   firstViewURL: string;
 };
 
-const youtubeChannelBaseURL = "https://studio.youtube.com/channel/";
+const youtubeChannelBaseURL = "https://studio.youtube.com/channel";
 
-export default async function configParser(configFilePath: string): Promise<AppConfig> {
-  const configRaw: AppConfigRaw = JSON.parse(await readFile(configFilePath).toString());
+export default function configParser(configFilePath: string): AppConfig {
+  const configRaw = JSON.parse(readFileSync(configFilePath).toString()) as AppConfigRaw;
+
+  console.log(configRaw);
 
   const firstViewURL = (() => {
     switch (configRaw.firstView) {
       case "create_stream":
-        return `${youtubeChannelBaseURL}${configRaw.channeId}}/livestreaming/stream`;
+        return `${youtubeChannelBaseURL}/${configRaw.channelId}/livestreaming/stream`;
+
+      case "recent_stream":
+        return "";
 
       default:
         throw new Error(configRaw.firstView);
