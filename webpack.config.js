@@ -37,15 +37,7 @@ var main = {
     extensions: resolveExt,
     plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
   },
-  plugins: [
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.join(__dirname, "src", "renderer", "index.html"),
-        },
-      ],
-    }),
-  ],
+  plugins: [],
 };
 
 var preload = {
