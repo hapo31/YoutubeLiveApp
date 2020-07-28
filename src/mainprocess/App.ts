@@ -60,7 +60,7 @@ class MyApp {
       this.appStore?.dispatch(ChangeURLAction(url));
     });
 
-    const preloadBasePath = isDebug ? "./dist/scripts/" : "./scripts/";
+    const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/preload.js";
     this.window = new BrowserWindow(windowOption);
 
     this.window.loadURL(state.nowUrl);
