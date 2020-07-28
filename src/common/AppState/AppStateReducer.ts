@@ -5,7 +5,7 @@ export default function createAppReducer(initialState: AppState) {
   return (state = initialState, action: AppStateAction.Actions) => {
     switch (action.type) {
       case AppStateAction.CHANGE_URL:
-        return { url: action.url };
+        return { nowUrl: action.url };
     }
 
     return state;

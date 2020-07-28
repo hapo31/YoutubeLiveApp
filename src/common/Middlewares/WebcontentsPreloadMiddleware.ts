@@ -11,7 +11,6 @@ export default function RendererProcessMiddleware(): Middleware {
     }
     next(action);
     ipcRenderer.send(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, action);
-    console.log(`state changed:${JSON.stringify(store.getState())}`);
   };
 }
 

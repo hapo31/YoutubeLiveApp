@@ -1,22 +1,21 @@
+import path from "path";
+import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, Menu, ipcMain } from "electron";
 import menuTemplate from "./MenuTemplate";
 import { compose, applyMiddleware, createStore, StoreCreator, Action, Store } from "redux";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import IPCEvent from "@common/events/IPCEvent";
-import { Actions as AppStateAction } from "@common/AppState/Actions/AppStateAction";
+import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
-import createInitialState from "./getInitialState";
-import { readFileSync } from "fs";
-import path from "path";
-import configParser from "./configParser";
 import openBrowser from "./NativeBridge/OpenBrowser";
+import resumeAppState from "./resumeAppState";
+import { exit } from "process";
 
 const isDebug = process.env.NODE_ENV == "development";
 
 class MyApp {
   private appStore?: Store<AppState, AppStateAction>;
-
   public window?: BrowserWindow;
   public chatBox?: BrowserWindow;
 
@@ -31,8 +30,7 @@ class MyApp {
   private onReady = () => {
     const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
-    const config = configParser("./config.json");
-    const state = createInitialState(config);
+    const state = resumeAppState("./config.json", ".save/app.json");
     this.appStore = myCreateStore(createAppReducer(state));
 
     Menu.setApplicationMenu(menuTemplate);
@@ -57,11 +55,15 @@ class MyApp {
       this.appStore?.dispatch(action as any);
     });
 
-    const preloadBasePath = isDebug ? "./dist/scripts/" : "/scripts/";
+    ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url) => {
+      console.log({ "IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD": url });
+      this.appStore?.dispatch(ChangeURLAction(url));
+    });
 
+    const preloadBasePath = isDebug ? "./dist/scripts/" : "/scripts/";
     this.window = new BrowserWindow(windowOption);
 
-    this.window.loadURL(state.url);
+    this.window.loadURL(state.nowUrl);
 
     const preloadJSCode = readFileSync(path.resolve(preloadBasePath, "preload.js")).toString("utf-8");
     console.log("Loaded preload.js");
@@ -74,7 +76,6 @@ class MyApp {
       // 開こうとしているURLが外部だったらブラウザで開く
       if (!/^https?:\/\/studio\.youtube.com/.test(url)) {
         openBrowser(url);
-
         return;
       }
 
@@ -108,6 +109,9 @@ class MyApp {
   };
 
   private onWindowAllClosed = () => {
+    const state = this.appStore?.getState();
+    const JSONstring = JSON.stringify(state);
+    writeFileSync(".save/app.json", JSONstring);
     this.app.quit();
   };
 }

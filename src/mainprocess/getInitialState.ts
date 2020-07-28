@@ -1,8 +1,7 @@
 import AppState from "@common/AppState/AppState";
-import { AppConfig } from "./configParser";
 
-export default function createInitialState(config: AppConfig): AppState {
+export default function createInitialState(url: string): AppState {
   return {
-    url: config.firstViewURL,
+    nowUrl: url,
   };
 }
