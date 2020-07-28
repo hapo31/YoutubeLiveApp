@@ -1,4 +1,3 @@
 {
-  "channelId": "[YourChannelID]",
-  "firstView": "create_stream"
+  "channelId": "[YourChannelID]"
 }
