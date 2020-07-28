@@ -1,5 +1,5 @@
 type AppState = {
-  url: string;
+  nowUrl: string;
 };
 
 export default AppState;

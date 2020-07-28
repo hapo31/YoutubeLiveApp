@@ -18,13 +18,12 @@ export default function MainProcessMiddleware(): Middleware {
       });
     }
     if (!ipcMain.eventNames().some((name) => name === IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD)) {
-      ipcMain.addListener(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action) => {
+      ipcMain.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action) => {
         next(action);
       });
     }
 
     next(action);
     App.window?.webContents.send(IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN, action);
-    console.log(`state changed:${JSON.stringify(store.getState())}`);
   };
 }
