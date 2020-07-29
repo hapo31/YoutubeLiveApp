@@ -1,8 +1,8 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, Menu, ipcMain } from "electron";
-import menuTemplate from "./MenuTemplate";
 import { compose, applyMiddleware, createStore, StoreCreator, Action, Store } from "redux";
+import menuTemplate from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import IPCEvent from "@common/events/IPCEvent";
@@ -10,9 +10,9 @@ import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Act
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
 import resumeAppState from "./resumeAppState";
-import { exit } from "process";
 
 const isDebug = process.env.NODE_ENV == "development";
+const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
 
 class MyApp {
   private appStore?: Store<AppState, AppStateAction>;
@@ -47,20 +47,8 @@ class MyApp {
       },
     };
 
-    ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
-      event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore?.getState());
-    });
-    ipcMain.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action<AppState>) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.appStore?.dispatch(action as any);
-    });
+    this.registIPCEventListeners();
 
-    ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url) => {
-      console.log({ "IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD": url });
-      this.appStore?.dispatch(ChangeURLAction(url));
-    });
-
-    const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
     this.window = new BrowserWindow(windowOption);
 
     this.window.loadURL(state.nowUrl);
@@ -69,7 +57,22 @@ class MyApp {
     console.log("Loaded preload.js");
     this.window?.webContents.executeJavaScript(preloadJSCode);
 
-    this.window.webContents.on("new-window", (event, url) => {
+    this.window.webContents.on("new-window", this.webContentsOnNewWindow(windowOption));
+
+    if (isDebug) {
+      this.window.webContents.openDevTools();
+    }
+  };
+
+  private onWindowAllClosed = () => {
+    const state = this.appStore?.getState();
+    const JSONstring = JSON.stringify(state);
+    writeFileSync(".save/app.json", JSONstring);
+    this.app.quit();
+  };
+
+  private webContentsOnNewWindow(windowOptions: Electron.BrowserWindowConstructorOptions) {
+    return (event: Electron.NewWindowEvent, url: string) => {
       event.preventDefault();
       console.log({ url });
 
@@ -83,7 +86,7 @@ class MyApp {
         return;
       }
       this.chatBox = new BrowserWindow({
-        ...windowOption,
+        ...windowOptions,
         width: 600,
         height: 700,
         minWidth: undefined,
@@ -101,19 +104,23 @@ class MyApp {
       if (isDebug) {
         this.chatBox.webContents.openDevTools();
       }
+    };
+  }
+
+  private registIPCEventListeners() {
+    ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
+      event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore?.getState());
+    });
+    ipcMain.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action<AppState>) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.appStore?.dispatch(action as any);
     });
 
-    if (isDebug) {
-      this.window.webContents.openDevTools();
-    }
-  };
-
-  private onWindowAllClosed = () => {
-    const state = this.appStore?.getState();
-    const JSONstring = JSON.stringify(state);
-    writeFileSync(".save/app.json", JSONstring);
-    this.app.quit();
-  };
+    ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url) => {
+      console.log({ "IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD": url });
+      this.appStore?.dispatch(ChangeURLAction(url));
+    });
+  }
 }
 
 export default new MyApp(app);
