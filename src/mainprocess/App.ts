@@ -65,9 +65,6 @@ class MyApp {
   };
 
   private onWindowAllClosed = () => {
-    const state = this.appStore?.getState();
-    const JSONstring = JSON.stringify(state);
-    writeFileSync(".save/app.json", JSONstring);
     this.app.quit();
   };
 
@@ -116,9 +113,13 @@ class MyApp {
       this.appStore?.dispatch(action as any);
     });
 
-    ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url) => {
+    ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url: string) => {
       console.log({ "IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD": url });
       this.appStore?.dispatch(ChangeURLAction(url));
+      const state = { ...this.appStore?.getState(), nowUrl: url };
+
+      const JSONstring = JSON.stringify(state);
+      writeFileSync(".save/app.json", JSONstring);
     });
   }
 }
