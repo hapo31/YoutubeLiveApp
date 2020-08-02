@@ -10,17 +10,13 @@ const preloadInit = async () => {
   let url = location.href;
 
   function init() {
+    // FIXME: ページの切り替えを検知してるけど流石にこれはアホ
     setInterval(() => {
       if (url !== location.href) {
         url = location.href;
         ipcRenderer.send(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, location.href);
       }
     }, 10);
-
-    // window.onpopstate = (_event: PopStateEvent) => {
-    //   ipcRenderer.send(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, location.href);
-    //   console.log({ location: location.href });
-    // };
   }
 
   init();
