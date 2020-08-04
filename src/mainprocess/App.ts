@@ -53,9 +53,11 @@ class MyApp {
 
     this.window.loadURL(state.nowUrl);
 
-    const preloadJSCode = readFileSync(path.resolve(preloadBasePath, "preload.js")).toString("utf-8");
+    const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     console.log("Loaded preload.js");
+    const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
     this.window?.webContents.executeJavaScript(preloadJSCode);
+    this.window?.webContents.executeJavaScript(chatboxJSCode);
 
     this.window.webContents.on("new-window", this.webContentsOnNewWindow(windowOption));
 
@@ -92,7 +94,7 @@ class MyApp {
       });
 
       this.chatBox.once("ready-to-show", () => {
-        const chatboxJSCode = readFileSync(path.resolve(preloadBasePath, "chatbox.js")).toString("utf-8");
+        const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
         console.log("Loaded chatbox.js");
         this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
       });
@@ -121,6 +123,10 @@ class MyApp {
       const JSONstring = JSON.stringify(state);
       writeFileSync(".save/app.json", JSONstring);
     });
+  }
+
+  private loadJSCode(path: string) {
+    return readFileSync(path).toString("utf-8");
   }
 }
 

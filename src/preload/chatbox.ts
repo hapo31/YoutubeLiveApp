@@ -10,8 +10,6 @@ import sendDebugLog from "./debug/sendDebugLog";
 
   function init() {
     try {
-      sendDebugLog("attach: chatbox");
-
       const chatItemElement = document.querySelector("#items");
       if (chatItemElement == null) {
         setTimeout(() => {
@@ -19,6 +17,7 @@ import sendDebugLog from "./debug/sendDebugLog";
         }, 1000);
         return;
       }
+      sendDebugLog("attach: chatbox");
 
       attachChatBox(chatItemElement as HTMLElement);
     } catch (e) {
