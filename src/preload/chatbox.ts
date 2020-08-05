@@ -10,16 +10,15 @@ import sendDebugLog from "./debug/sendDebugLog";
 
   function init() {
     try {
-      const chatItemElement = document.querySelector("#items");
-      if (chatItemElement == null) {
+      const chatItemsElement = document.querySelector("#items");
+      if (chatItemsElement == null) {
         setTimeout(() => {
           init();
         }, 1000);
         return;
       }
-      sendDebugLog("attach: chatbox");
-
-      attachChatBox(chatItemElement as HTMLElement);
+      console.log({ items: chatItemsElement });
+      attachChatBox(chatItemsElement as HTMLElement);
     } catch (e) {
       sendDebugLog(e);
     }

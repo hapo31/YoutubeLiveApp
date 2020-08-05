@@ -55,9 +55,10 @@ class MyApp {
 
     const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     console.log("Loaded preload.js");
-    const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
     this.window?.webContents.executeJavaScript(preloadJSCode);
-    this.window?.webContents.executeJavaScript(chatboxJSCode);
+
+    // const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
+    // this.window?.webContents.executeJavaScript(chatboxJSCode);
 
     this.window.webContents.on("new-window", this.webContentsOnNewWindow(windowOption));
 
@@ -70,13 +71,13 @@ class MyApp {
     this.app.quit();
   };
 
-  private webContentsOnNewWindow(windowOptions: Electron.BrowserWindowConstructorOptions) {
+  private webContentsOnNewWindow = (windowOptions: Electron.BrowserWindowConstructorOptions) => {
     return (event: Electron.NewWindowEvent, url: string) => {
       event.preventDefault();
       console.log({ url });
 
       // 開こうとしているURLが外部だったらブラウザで開く
-      if (!/^https?:\/\/studio\.youtube.com/.test(url)) {
+      if (!/^https?:\/\/(studio|www)\.youtube.com/.test(url)) {
         openBrowser(url);
         return;
       }
@@ -93,18 +94,16 @@ class MyApp {
         show: isDebug,
       });
 
-      this.chatBox.once("ready-to-show", () => {
-        const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
-        console.log("Loaded chatbox.js");
-        this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
-      });
       this.chatBox.loadURL(url);
+      const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
+      this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
+      console.log("execute chatbox.js");
 
       if (isDebug) {
         this.chatBox.webContents.openDevTools();
       }
     };
-  }
+  };
 
   private registIPCEventListeners() {
     ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
