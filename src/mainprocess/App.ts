@@ -61,6 +61,12 @@ class MyApp {
     // this.window?.webContents.executeJavaScript(chatboxJSCode);
 
     this.window.webContents.on("new-window", this.webContentsOnNewWindow(windowOption));
+    this.window.on("close", () => {
+      if (this.chatBox && this.chatBox.closable) {
+        this.chatBox.close();
+        this.chatBox = undefined;
+      }
+    });
 
     if (isDebug) {
       this.window.webContents.openDevTools();
@@ -89,6 +95,8 @@ class MyApp {
         ...windowOptions,
         width: 600,
         height: 700,
+        frame: isDebug,
+        skipTaskbar: true,
         minWidth: undefined,
         minHeight: undefined,
         show: isDebug,
@@ -96,7 +104,9 @@ class MyApp {
 
       this.chatBox.loadURL(url);
       const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
-      this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
+      this.chatBox.webContents.on("did-finish-load", () => {
+        this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
+      });
       console.log("execute chatbox.js");
 
       if (isDebug) {
