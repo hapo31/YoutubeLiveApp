@@ -26,7 +26,7 @@ var main = {
   module: {
     rules: [
       {
-        test: /.ts?$/,
+        test: /.ts$/,
         include: [path.resolve(__dirname, "src")],
         exclude: [path.resolve(__dirname, "node_modules")],
         loader: "ts-loader",
@@ -56,7 +56,7 @@ var preload = {
   module: {
     rules: [
       {
-        test: /.ts?$/,
+        test: /.tsx?$/,
         include: [path.resolve(__dirname, "src")],
         exclude: [path.resolve(__dirname, "node_modules")],
         loader: "ts-loader",
@@ -86,7 +86,7 @@ var chatbox = {
   module: {
     rules: [
       {
-        test: /.ts?$/,
+        test: /.tsx?$/,
         include: [path.resolve(__dirname, "src")],
         exclude: [path.resolve(__dirname, "node_modules")],
         loader: "ts-loader",
