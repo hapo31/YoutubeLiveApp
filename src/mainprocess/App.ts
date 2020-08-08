@@ -9,7 +9,7 @@ import IPCEvent from "@common/events/IPCEvent";
 import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
-import resumeAppState from "./resumeAppState";
+import resumeData from "./resumeData";
 
 const isDebug = process.env.NODE_ENV == "development";
 const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
@@ -30,8 +30,12 @@ class MyApp {
   private onReady = () => {
     const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
-    const state = resumeAppState("./config.json", ".save/app.json");
-    this.appStore = myCreateStore(createAppReducer(state));
+    const saveData = resumeData("./config.json", ".save/app.json");
+    const initialState = {
+      nowUrl: saveData.nowUrl,
+      superChats: [],
+    };
+    this.appStore = myCreateStore(createAppReducer(initialState));
 
     Menu.setApplicationMenu(menuTemplate);
 
@@ -51,7 +55,7 @@ class MyApp {
 
     this.window = new BrowserWindow(windowOption);
 
-    this.window.loadURL(state.nowUrl);
+    this.window.loadURL(initialState.nowUrl);
 
     const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     console.log("Loaded preload.js");
@@ -62,7 +66,7 @@ class MyApp {
 
     this.window.webContents.on("new-window", this.webContentsOnNewWindow(windowOption));
     this.window.on("close", () => {
-      if (this.chatBox && this.chatBox.closable) {
+      if (this.chatBox && !this.chatBox.isDestroyed()) {
         this.chatBox.close();
         this.chatBox = undefined;
       }
@@ -96,7 +100,7 @@ class MyApp {
         width: 600,
         height: 700,
         frame: isDebug,
-        skipTaskbar: true,
+        skipTaskbar: !isDebug,
         minWidth: undefined,
         minHeight: undefined,
         show: isDebug,
@@ -127,7 +131,7 @@ class MyApp {
     ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url: string) => {
       console.log({ "IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD": url });
       this.appStore?.dispatch(ChangeURLAction(url));
-      const state = { ...this.appStore?.getState(), nowUrl: url };
+      const state = { nowUrl: url };
 
       const JSONstring = JSON.stringify(state);
       writeFileSync(".save/app.json", JSONstring);

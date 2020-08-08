@@ -4,6 +4,7 @@ import createAppReducer from "@common/AppState/AppStateReducer";
 import attachChatBox from "./chat/attachChatBox";
 import sendDebugLog from "./debug/sendDebugLog";
 import renderChatBox from "./Chat/render";
+import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
 
 (async () => {
   const myCreateStore = compose(applyMiddleware(RendererProcessMiddleware()))(createStore);
@@ -28,6 +29,7 @@ import renderChatBox from "./Chat/render";
 
       renderChatBox(div, store);
       attachChatBox(chatItemsElement as HTMLElement, (element) => {
+        store.dispatch(ReceivedSuperchat(element.parentElement?.innerHTML || ""));
         console.log(element);
       });
     } catch (e) {

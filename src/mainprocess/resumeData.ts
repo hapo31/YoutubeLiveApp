@@ -6,11 +6,15 @@ export type AppConfig = {
   channelId: string;
 };
 
+type SaveData = {
+  nowUrl: string;
+};
+
 const youtubeChannelBaseURL = "https://studio.youtube.com/channel";
 
-export default function resumeAppState(configFilePath: string, appStateFilePath: string) {
+export default function resumeData(configFilePath: string, appStateFilePath: string) {
   try {
-    const recentState = JSON.parse(readFileSync(appStateFilePath).toString("utf-8")) as AppState;
+    const recentState = JSON.parse(readFileSync(appStateFilePath).toString("utf-8")) as SaveData;
     return recentState;
   } catch (e) {
     const config = JSON.parse(readFileSync(configFilePath).toString()) as AppConfig;
