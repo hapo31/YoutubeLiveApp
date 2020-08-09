@@ -1,6 +1,6 @@
 type AppState = {
   nowUrl: string;
-  superChats: string[];
+  superChats: HTMLElement[];
 };
 
 export default AppState;

@@ -9,7 +9,7 @@ export const ChangeURLAction = (url: string) => ({
 
 export const RECEIVED_SUPERCHAT = "AppStateAction.RECEIVED_SUPERCHAT" as const;
 
-export const ReceivedSuperchat = (htmlStr: string) => ({
+export const ReceivedSuperchat = (element: HTMLElement) => ({
   type: RECEIVED_SUPERCHAT,
-  htmlStr,
+  element,
 });
