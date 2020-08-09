@@ -1,7 +1,6 @@
 import sendDebugLog from "../debug/sendDebugLog";
 
-export default function attachChatBox(chatItemElement: HTMLElement, onReceiveChat: (element: ChildNode) => void) {
-  sendDebugLog("Chat attached.");
+export default function attachChatBox(onReceiveChat: (element: HTMLElement) => void) {
   const observer = new MutationObserver((records, observer) => {
     if (records.length >= 1) {
       const nodes = records[0].addedNodes.item(0);
@@ -9,22 +8,24 @@ export default function attachChatBox(chatItemElement: HTMLElement, onReceiveCha
         return;
       }
 
-      const targetNode = nodes.childNodes[2] as HTMLElement;
+      const targetNode = nodes.childNodes[2].parentElement;
+
+      if (!targetNode) {
+        return;
+      }
+      console.log({ targetNode });
       onReceiveChat(targetNode);
     }
     observer.takeRecords(); // 古いやつは捨てる
   });
-  observer.observe(chatItemElement, { childList: true });
-}
 
-function isSuperChat(node: ChildNode) {
-  return (node as HTMLElement).querySelector("#card") !== null;
-}
-
-function parseSuperChatCard(element: HTMLElement) {
-  document.body.appendChild(element);
-}
-
-function parseChat(element: HTMLElement) {
-  return;
+  return [
+    (chatItemElement: HTMLElement) => {
+      observer.observe(chatItemElement, { childList: true, subtree: true });
+      console.log("chat attached");
+    },
+    () => {
+      observer.disconnect();
+    },
+  ] as const;
 }

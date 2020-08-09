@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { Store } from "redux";
 
 // eslint-disable-next-line
-export default function renderChatBox(target: HTMLElement, store: Store<any, any>) {
+export default function renderCardContainer(target: HTMLElement, store: Store<any, any>) {
   render(
     <Provider store={store}>
       <CardContainerComponent />

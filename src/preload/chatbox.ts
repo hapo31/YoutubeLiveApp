@@ -3,7 +3,7 @@ import RendererProcessMiddleware, { requestInitialState } from "@common/Middlewa
 import createAppReducer from "@common/AppState/AppStateReducer";
 import attachChatBox from "./chat/attachChatBox";
 import sendDebugLog from "./debug/sendDebugLog";
-import renderChatBox from "./Chat/render";
+import renderSuperChatContainer from "./Chat/render";
 import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
 
 (async () => {
@@ -12,8 +12,7 @@ import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
 
   function init() {
     try {
-      const chatItemsElement = document.querySelector("#items.yt-live-chat-item-list-renderer");
-      if (chatItemsElement == null) {
+      if (document.getElementById("contents") == null) {
         setTimeout(() => {
           init();
         }, 1000);
@@ -27,10 +26,21 @@ import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
       }
       target.append(div);
 
-      renderChatBox(div, store);
-      attachChatBox(chatItemsElement as HTMLElement, (element) => {
-        store.dispatch(ReceivedSuperchat(element.parentElement?.innerHTML || ""));
-        console.log(element);
+      renderSuperChatContainer(div, store);
+
+      const [start, _end] = attachChatBox((element) => {
+        if (element.querySelector("#card")) {
+          store.dispatch(ReceivedSuperchat(element));
+        }
+
+        setInterval(() => {
+          const chatContainer = document.querySelector("#items.yt-live-chat-item-list-renderer") as HTMLElement;
+          if (!chatContainer) {
+            return;
+          }
+          console.log(element);
+          start(chatContainer);
+        }, 10000);
       });
     } catch (e) {
       sendDebugLog(e);
