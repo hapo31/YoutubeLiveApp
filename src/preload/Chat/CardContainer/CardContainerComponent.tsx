@@ -10,7 +10,7 @@ export default () => {
   return (
     <div>
       <button onClick={() => setVisible(!visible)}>スパチャ履歴を表示</button>
-      <SuperChatCardList cardList={[]} isVisible={visible}></SuperChatCardList>
+      <SuperChatCardList cardList={appState.superChats} isVisible={visible}></SuperChatCardList>
     </div>
   );
 };
