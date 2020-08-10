@@ -1,8 +1,10 @@
 import React from "react";
+import { SuperChatInfo } from "@common/AppState/AppState";
+import ChatCard from "../ChatCard/ChatCard";
 
 type Props = {
   isVisible: boolean;
-  cardList: HTMLElement[];
+  superChatList: SuperChatInfo[];
 };
 export default (props: Props) =>
   props.isVisible ? (
@@ -15,9 +17,9 @@ export default (props: Props) =>
         zIndex: 99999,
       }}
     >
-      <h1>スパチャの数:{props.cardList.length}</h1>
-      {props.cardList.map((card) => (
-        <p>{card}</p>
+      <h1>スパチャの数:{props.superChatList.length}</h1>
+      {props.superChatList.map((superChat) => (
+        <ChatCard superChatInfo={superChat} />
       ))}
     </div>
   ) : null;
