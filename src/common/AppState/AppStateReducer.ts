@@ -12,7 +12,7 @@ export default function createAppReducer(initialState: AppState) {
       case AppStateAction.RECEIVED_SUPERCHAT:
         return {
           ...state,
-          superChats: [...state.superChats, action.element],
+          superChats: [...state.superChats, action.superChat],
         };
     }
 

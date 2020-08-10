@@ -1,3 +1,5 @@
+import { SuperChatInfo } from "../AppState";
+
 export type Actions = ReturnType<typeof ChangeURLAction | typeof ReceivedSuperchat>;
 
 export const CHANGE_URL = "AppStateAction.CHANGE_URL" as const;
@@ -9,7 +11,7 @@ export const ChangeURLAction = (url: string) => ({
 
 export const RECEIVED_SUPERCHAT = "AppStateAction.RECEIVED_SUPERCHAT" as const;
 
-export const ReceivedSuperchat = (element: HTMLElement) => ({
+export const ReceivedSuperchat = (superChat: SuperChatInfo) => ({
   type: RECEIVED_SUPERCHAT,
-  element,
+  superChat,
 });
