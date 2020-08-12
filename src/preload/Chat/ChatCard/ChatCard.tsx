@@ -29,6 +29,10 @@ type styledProps = {
 
 const Container = styled.div`
   border-radius: 5px;
+  * > img {
+    height: 24px;
+    width: 24px;
+  }
 `;
 
 const Header = styled.div`

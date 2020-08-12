@@ -18,8 +18,8 @@ export default (props: Props) =>
       }}
     >
       <h1>スパチャの数:{props.superChatList.length}</h1>
-      {props.superChatList.map((superChat) => (
-        <ChatCard superChatInfo={superChat} />
+      {props.superChatList.map((superChat, index) => (
+        <ChatCard key={`${index}-${superChat.message}`} superChatInfo={superChat} />
       ))}
     </div>
   ) : null;
