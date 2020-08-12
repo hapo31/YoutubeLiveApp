@@ -1,31 +1,35 @@
-import sendDebugLog from "../debug/sendDebugLog";
+const colors = ["red", "green", "blue", "yellow", "purple", "orange", "gray", "magenta"];
 
 export default function attachChatBox(onReceiveChat: (element: HTMLElement) => void) {
+  const chatItemElement = document.getElementById("chat");
+  if (!chatItemElement) {
+    throw "chatItemElement is null";
+  }
   const observer = new MutationObserver((records, observer) => {
-    if (records.length >= 1) {
-      const nodes = records[0].addedNodes.item(0);
-      if (nodes == null) {
-        return;
-      }
-
-      const targetNode = nodes.childNodes[2].parentElement;
-
-      if (!targetNode) {
-        return;
-      }
-      console.log({ targetNode });
-      onReceiveChat(targetNode);
+    if (records.length <= 0) {
+      return;
     }
-    observer.takeRecords(); // 古いやつは捨てる
+
+    for (const record of records) {
+      for (const item of Array.from(record.addedNodes)) {
+        if (item.childNodes.length <= 0) {
+          continue;
+        }
+        const element = item.childNodes[0].parentElement;
+        if (element?.localName === "yt-live-chat-text-message-renderer" || element?.localName === "yt-live-chat-paid-message-renderer") {
+          onReceiveChat(element);
+        }
+      }
+    }
+
+    observer.takeRecords();
   });
 
-  return [
-    (chatItemElement: HTMLElement) => {
-      observer.observe(chatItemElement, { childList: true, subtree: true });
-      console.log("chat attached");
-    },
-    () => {
-      observer.disconnect();
-    },
-  ] as const;
+  observer.observe(chatItemElement, { childList: true, subtree: true });
+
+  console.log("chat attached");
+
+  return () => {
+    observer.disconnect();
+  };
 }
