@@ -2,11 +2,11 @@ import path from "path";
 import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, Menu, ipcMain } from "electron";
 import { compose, applyMiddleware, createStore, StoreCreator, Action, Store } from "redux";
-import menuTemplate from "./MenuTemplate";
+import { mainMenuTemplate, chatboxMenuTemplate } from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import IPCEvent from "@common/events/IPCEvent";
-import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
+import { Actions as AppStateAction, ChangeURLAction, ResetSuperchatList } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
 import resumeData from "./resumeData";
@@ -37,7 +37,7 @@ class MyApp {
     };
     this.appStore = myCreateStore(createAppReducer(initialState));
 
-    Menu.setApplicationMenu(menuTemplate);
+    Menu.setApplicationMenu(mainMenuTemplate);
 
     const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YoutubeLiveApp",
@@ -105,13 +105,16 @@ class MyApp {
         minHeight: undefined,
         show: isDebug,
       });
-
+      this.appStore?.dispatch(ResetSuperchatList());
+      this.chatBox.setMenu(chatboxMenuTemplate);
       this.chatBox.loadURL(url);
       const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
       this.chatBox.webContents.on("did-finish-load", () => {
         this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
       });
-      console.log("execute chatbox.js");
+      this.chatBox.webContents.on("will-navigate", () => {
+        this.appStore?.dispatch(ResetSuperchatList());
+      });
 
       if (isDebug) {
         this.chatBox.webContents.openDevTools();

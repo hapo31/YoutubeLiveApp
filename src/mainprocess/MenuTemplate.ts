@@ -1,7 +1,7 @@
 import { Menu, BrowserWindow } from "electron";
 import config from "../../config.json";
 
-const menuTemplate = [
+export const mainMenuTemplate = Menu.buildFromTemplate([
   {
     label: "ページ移動(1)",
     submenu: [
@@ -38,6 +38,20 @@ const menuTemplate = [
       },
     ],
   },
-];
+]);
 
-export default Menu.buildFromTemplate(menuTemplate);
+export const chatboxMenuTemplate = Menu.buildFromTemplate([
+  {
+    label: "困ったとき",
+    submenu: [
+      {
+        label: "開発者ツールを開く",
+        click: (__item: unknown, focusedWindow?: BrowserWindow) => {
+          if (focusedWindow) {
+            focusedWindow.webContents.openDevTools();
+          }
+        },
+      },
+    ],
+  },
+]);

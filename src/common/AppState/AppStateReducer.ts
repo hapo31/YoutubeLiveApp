@@ -14,6 +14,12 @@ export default function createAppReducer(initialState: AppState) {
           ...state,
           superChats: [...state.superChats, action.superChat],
         };
+
+      case AppStateAction.RESET_SUPERCHAT_LIST:
+        return {
+          ...state,
+          superChats: [],
+        };
     }
 
     return state;
