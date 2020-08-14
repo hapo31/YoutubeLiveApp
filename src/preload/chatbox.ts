@@ -3,7 +3,6 @@ import RendererProcessMiddleware, { requestInitialState } from "@common/Middlewa
 import createAppReducer from "@common/AppState/AppStateReducer";
 import attachChatBox from "./chat/attachChatBox";
 import sendDebugLog from "./debug/sendDebugLog";
-import renderSuperChatContainer from "./Chat/render";
 import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
 import { SuperChatInfo } from "@common/AppState/AppState";
 
@@ -20,15 +19,6 @@ import { SuperChatInfo } from "@common/AppState/AppState";
         }, 1000);
         return;
       }
-      const div = document.createElement("div");
-      div.id = "app";
-      const target = document.querySelector("paper-listbox#menu");
-      if (target == null) {
-        return;
-      }
-      target.append(div);
-
-      renderSuperChatContainer(div, store);
 
       const handler = (element: HTMLElement) => {
         console.log("rr");
@@ -51,11 +41,11 @@ import { SuperChatInfo } from "@common/AppState/AppState";
 function parseSuperChatElement(element: HTMLElement): SuperChatInfo {
   const img = element.querySelector("#img") as HTMLImageElement;
   const author = element.querySelector("#author-name");
-  const purchase = element.querySelector("#content");
+  const purchase = element.querySelector("#purchase-amount-column");
   const message = element.querySelector("#message");
 
   const matchResults = element.getAttribute("style")?.match(/(rgba\(\d+,\d+,\d+,\d\.?\d*\))/g);
-  console.log({ css: element.getAttribute("style"), matchResults });
+  console.log({ purchase });
 
   if (!matchResults) {
     throw purchase;
@@ -63,8 +53,10 @@ function parseSuperChatElement(element: HTMLElement): SuperChatInfo {
 
   return {
     imgUrl: img.src,
-    author: author?.innerHTML || "",
-    message: message?.innerHTML || "",
+    author: author?.textContent || "",
+    message: message?.textContent || "",
+    authorRaw: author?.innerHTML || "",
+    messageRaw: message?.innerHTML || "",
     purches: purchase?.textContent || "",
     superChatColorInfo: {
       primary: matchResults[0],

@@ -1,5 +1,3 @@
-const colors = ["red", "green", "blue", "yellow", "purple", "orange", "gray", "magenta"];
-
 export default function attachChatBox(onReceiveChat: (element: HTMLElement) => void) {
   const chatItemElement = document.getElementById("chat");
   if (!chatItemElement) {

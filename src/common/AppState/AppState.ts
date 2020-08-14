@@ -9,10 +9,12 @@ type SuperChatColorInfo = {
 
 export type SuperChatInfo = {
   imgUrl: string;
+  purches: string;
   author: string;
   message: string;
-  purches: string;
   superChatColorInfo: SuperChatColorInfo;
+  authorRaw: string;
+  messageRaw: string;
 };
 
 type AppState = {

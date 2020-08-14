@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 
 import styled from "styled-components";
 import { SuperChatInfo } from "@common/AppState/AppState";
@@ -7,20 +7,37 @@ type Props = {
   superChatInfo: SuperChatInfo;
 };
 
-export default ({ superChatInfo }: Props) => (
-  <Container>
-    <Header backgroundColor={superChatInfo.superChatColorInfo.secondary}>
-      <Img src={superChatInfo.imgUrl} alt="" height="40" width="40" />
-      <Name color={superChatInfo.superChatColorInfo.authorName} dangerouslySetInnerHTML={{ __html: superChatInfo.author }} />
-      <Purches color={superChatInfo.superChatColorInfo.header}>{superChatInfo.purches}</Purches>
-    </Header>
-    <Message
-      backgroundColor={superChatInfo.superChatColorInfo.primary}
-      color={superChatInfo.superChatColorInfo.message}
-      dangerouslySetInnerHTML={{ __html: superChatInfo.message }}
-    />
-  </Container>
-);
+export default ({ superChatInfo }: Props) => {
+  const onClickCopyHandler = useCallback(
+    (text: string) => async () => {
+      navigator.clipboard.writeText(text);
+    },
+    []
+  );
+  return (
+    <Container className="container">
+      <Header backgroundColor={superChatInfo.superChatColorInfo.secondary}>
+        <Img src={superChatInfo.imgUrl} alt="" height="40" width="40" />
+        <Wrapper>
+          <Name
+            onClick={onClickCopyHandler(superChatInfo.author)}
+            color={superChatInfo.superChatColorInfo.authorName}
+            dangerouslySetInnerHTML={{ __html: superChatInfo.authorRaw }}
+          />
+          <Purches color={superChatInfo.superChatColorInfo.header}>{superChatInfo.purches}</Purches>
+        </Wrapper>
+      </Header>
+      {superChatInfo.messageRaw.length > 0 ? (
+        <Message
+          onClick={onClickCopyHandler(superChatInfo.message)}
+          backgroundColor={superChatInfo.superChatColorInfo.primary}
+          color={superChatInfo.superChatColorInfo.message}
+          dangerouslySetInnerHTML={{ __html: superChatInfo.messageRaw }}
+        />
+      ) : null}
+    </Container>
+  );
+};
 
 type styledProps = {
   color?: string;
@@ -28,15 +45,16 @@ type styledProps = {
 };
 
 const Container = styled.div`
-  border-radius: 5px;
-  * > img {
+  margin: 5px;
+  border-radius: 10px;
+  > img {
     height: 24px;
     width: 24px;
   }
 `;
 
 const Header = styled.div`
-  width: 280px;
+  display: flex;
   height: 40px;
   padding: 8px 16px;
   background-color: ${(props: styledProps) => props.backgroundColor};
@@ -49,11 +67,18 @@ const Img = styled.img`
   margin-right: 16px;
 `;
 
-const Name = styled.p`
-  color: ${(props: styledProps) => props.color};
+const Wrapper = styled.div`
+  flex-direction: vertical;
 `;
 
-const Purches = styled.p`
+const Name = styled.div`
+  color: ${(props: styledProps) => props.color};
+  :hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+`;
+
+const Purches = styled.div`
   color: ${(props: styledProps) => props.color};
 `;
 
@@ -61,4 +86,12 @@ const Message = styled.div`
   padding: 8px 16px;
   background-color: ${(props: styledProps) => props.backgroundColor};
   color: ${(props: styledProps) => props.color};
+  :hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  > img {
+    width: 24px;
+    height: 24px;
+  }
 `;

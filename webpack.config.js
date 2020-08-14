@@ -100,4 +100,43 @@ var chatbox = {
   plugins: [],
 };
 
-module.exports = [main, preload, chatbox];
+var superchat = {
+  mode: isDev ? "development" : "production",
+  target: "electron-preload",
+  devtool: isDev ? "source-map" : false,
+  entry: path.join(__dirname, "src", "preload", "superchat"),
+  output: {
+    filename: "superchat.js",
+    path: path.resolve(outputPath, "scripts"),
+  },
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+  module: {
+    rules: [
+      {
+        test: /.tsx?$/,
+        include: [path.resolve(__dirname, "src")],
+        exclude: [path.resolve(__dirname, "node_modules")],
+        loader: "ts-loader",
+      },
+    ],
+  },
+  resolve: {
+    extensions: resolveExt,
+    plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
+  },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src", "resource", "superchat.html"),
+          to: path.resolve(__dirname, outputPath),
+        },
+      ],
+    }),
+  ],
+};
+
+module.exports = [main, preload, chatbox, superchat];
