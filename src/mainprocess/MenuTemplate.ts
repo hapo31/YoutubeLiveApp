@@ -1,4 +1,6 @@
 import { Menu, BrowserWindow, shell } from "electron";
+import { v4 as uuid } from "uuid";
+
 import config from "../../config.json";
 import path from "path";
 import contextMenu from "electron-context-menu";
@@ -58,7 +60,7 @@ export default function buildMenu() {
                 if (childs.length >= 1) {
                   return;
                 }
-                const window = App.createWindow({
+                const window = App.createWindow(uuid(), {
                   parent: focusedWindow,
                   acceptFirstMouse: true,
                   alwaysOnTop: true,

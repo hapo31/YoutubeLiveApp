@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import SuperChatCardList from "./SuperChatCardList";
 import { useSelector, useDispatch } from "react-redux";
 import AppState from "@common/AppState/AppState";

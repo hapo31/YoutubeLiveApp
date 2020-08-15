@@ -22,8 +22,6 @@ class MyApp {
 
   public childWindows: Map<string, BrowserWindow> = new Map();
 
-  public chatBox?: BrowserWindow;
-
   private app: App;
 
   private _isAlwaysOnTop = false;
@@ -71,7 +69,7 @@ class MyApp {
 
     const menus = buildMenu();
 
-    this.mainWindow = this.createWindow(windowOption);
+    this.mainWindow = this.createWindow("MainWindow", windowOption);
 
     this.mainWindow.loadURL(initialState.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
@@ -83,17 +81,31 @@ class MyApp {
     // const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
     // this.window?.webContents.executeJavaScript(chatboxJSCode);
 
-    this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow(windowOption, menus));
-    this.mainWindow.on("close", () => {
-      if (this.chatBox && !this.chatBox.isDestroyed()) {
-        this.chatBox.close();
-        this.chatBox = undefined;
-      }
-    });
+    const videoIdParseRegExp = /https:\/\/studio.youtube\.com\/video\/(\w+)\/livestreaming/;
 
-    if (isDebug) {
-      this.mainWindow.webContents.openDevTools();
-    }
+    this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow(windowOption, menus));
+    this.mainWindow.webContents.on("did-navigate-in-page", (event, url) => {
+      console.log({ "did-navigate-in-page": url });
+      if (!videoIdParseRegExp.test(url)) {
+        return;
+      }
+      const result = videoIdParseRegExp.exec(url);
+      if (result == null) {
+        // 何かの間違い
+        return;
+      }
+      console.log({ result });
+      const videoId = result[1];
+
+      this.openChatBox(videoId, windowOption, menus.chatboxMenuTemplate);
+    });
+    this.mainWindow.on("close", () => {
+      this.childWindows.forEach((window, key) => {
+        if (key !== "MainWindow" && !window.isDestroyed()) {
+          window.close();
+        }
+      });
+    });
   };
 
   private onWindowAllClosed = () => {
@@ -103,7 +115,6 @@ class MyApp {
   private webContentsOnNewWindow = (windowOptions: Electron.BrowserWindowConstructorOptions, menus: ReturnType<typeof buildMenu>) => {
     return (event: Electron.NewWindowEvent, url: string) => {
       event.preventDefault();
-      console.log({ url });
 
       // 開こうとしているURLが外部だったらブラウザで開く
       if (!/^https?:\/\/(studio|www)\.youtube.com/.test(url)) {
@@ -114,34 +125,35 @@ class MyApp {
       if (url.indexOf("live_chat?") < 0) {
         return;
       }
-      this.chatBox = this.createWindow({
-        ...windowOptions,
-        parent: this.mainWindow,
-        width: 600,
-        height: 700,
-        frame: isDebug,
-        skipTaskbar: !isDebug,
-        minWidth: undefined,
-        minHeight: undefined,
-        show: isDebug,
-      });
-      this.appStore?.dispatch(ResetSuperchatList());
-      this.chatBox.setMenu(menus.chatboxMenuTemplate);
-      this.chatBox.loadURL(url);
-      const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
-      this.chatBox.webContents.on("did-finish-load", () => {
-        this.chatBox?.webContents.executeJavaScript(chatboxJSCode);
-      });
-      this.chatBox.webContents.on("will-navigate", () => {
-        this.appStore?.dispatch(ResetSuperchatList());
-      });
 
-      if (isDebug) {
-        this.chatBox.webContents.openDevTools();
-      }
+      this.openChatBox(url, windowOptions, menus.chatboxMenuTemplate);
     };
   };
 
+  private openChatBox(videoId: string, windowOptions: Electron.BrowserWindowConstructorOptions, menu: Menu) {
+    if (this.childWindows.has(videoId)) {
+      return;
+    }
+    const chatBox = this.createWindow(videoId, {
+      ...windowOptions,
+      parent: this.mainWindow,
+      width: 600,
+      height: 700,
+      minWidth: undefined,
+      minHeight: undefined,
+      show: isDebug,
+    });
+    this.appStore?.dispatch(ResetSuperchatList());
+    chatBox.setMenu(menu);
+    chatBox.loadURL(`https://www.youtube.com/live_chat?is_popout=1&v=${videoId}`);
+    const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
+    chatBox.webContents.on("did-finish-load", () => {
+      chatBox.webContents.executeJavaScript(chatboxJSCode);
+    });
+    chatBox.webContents.on("will-navigate", () => {
+      this.appStore?.dispatch(ResetSuperchatList());
+    });
+  }
   private registIPCEventListeners() {
     ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
       event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore?.getState());
@@ -165,9 +177,8 @@ class MyApp {
     return readFileSync(path).toString("utf-8");
   }
 
-  public createWindow(windowOption?: Electron.BrowserWindowConstructorOptions) {
+  public createWindow(id: string, windowOption?: Electron.BrowserWindowConstructorOptions) {
     const window = new BrowserWindow(windowOption);
-    const id = uuid();
     window.addListener("closed", () => {
       this.childWindows.delete(id);
     });
