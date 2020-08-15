@@ -63,5 +63,6 @@ function parseSuperChatElement(element: HTMLElement): SuperChatInfo {
       timestamp: matchResults[4],
       message: matchResults[5],
     },
+    checked: false,
   };
 }

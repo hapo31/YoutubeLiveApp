@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import SuperChatCardList from "./SuperChatCardList";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import AppState from "@common/AppState/AppState";
+import { CheckedSuperchat } from "@common/AppState/Actions/AppStateAction";
 
 export default () => {
   const appState = useAppState();
+  const dispatch = useDispatch();
+  const onClickCardHandler = useCallback((index: number) => {
+    dispatch(CheckedSuperchat(index));
+  }, []);
   console.log(appState);
-  return <SuperChatCardList superChatList={appState.superChats}></SuperChatCardList>;
+  return <SuperChatCardList onClickCard={onClickCardHandler} superChatList={appState.superChats}></SuperChatCardList>;
 };
 
 function useAppState() {

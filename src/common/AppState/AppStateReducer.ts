@@ -20,6 +20,13 @@ export default function createAppReducer(initialState: AppState) {
           ...state,
           superChats: [],
         };
+
+      case AppStateAction.CHECKED_SUPERCHAT: {
+        state.superChats[action.index].checked = true;
+        return {
+          ...state,
+        };
+      }
     }
 
     return state;

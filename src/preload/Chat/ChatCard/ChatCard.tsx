@@ -5,17 +5,23 @@ import { SuperChatInfo } from "@common/AppState/AppState";
 
 type Props = {
   superChatInfo: SuperChatInfo;
+  index: number;
+  onClick: (index: number) => void;
 };
 
-export default ({ superChatInfo }: Props) => {
+export default (props: Props) => {
   const onClickCopyHandler = useCallback(
     (text: string) => async () => {
       navigator.clipboard.writeText(text);
     },
     []
   );
+
+  const onClickContainerHandler = useCallback((index: number) => () => props.onClick(index), [props.index]);
+
+  const { superChatInfo } = props;
   return (
-    <Container className="container">
+    <Container onClick={onClickContainerHandler(props.index)} isBordered={superChatInfo.checked} className="container">
       <Header backgroundColor={superChatInfo.superChatColorInfo.secondary}>
         <Img src={superChatInfo.imgUrl} alt="" height="40" width="40" />
         <Wrapper>
@@ -45,6 +51,7 @@ type styledProps = {
 };
 
 const Container = styled.div`
+  border: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "solid 3px blue" : "none")};
   margin: 5px;
   border-radius: 10px;
   > img {

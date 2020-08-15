@@ -1,6 +1,8 @@
 import { SuperChatInfo } from "../AppState";
 
-export type Actions = ReturnType<typeof ChangeURLAction | typeof ReceivedSuperchat | typeof ResetSuperchatList | typeof RendererInitialize>;
+export type Actions = ReturnType<
+  typeof ChangeURLAction | typeof ReceivedSuperchat | typeof ResetSuperchatList | typeof RendererInitialize | typeof CheckedSuperchat
+>;
 
 export const CHANGE_URL = "AppStateAction.CHANGE_URL" as const;
 
@@ -22,8 +24,15 @@ export const ResetSuperchatList = () => ({
   type: RESET_SUPERCHAT_LIST,
 });
 
-export const RENDERER_INITIALIZE = "RendererInitialize.RENDER_INITIALIZE" as const;
+export const RENDERER_INITIALIZE = "AppStateAction.RENDER_INITIALIZE" as const;
 
 export const RendererInitialize = () => ({
   type: RENDERER_INITIALIZE,
+});
+
+export const CHECKED_SUPERCHAT = "AppStateAction.CHECKED_SUPERCHAT" as const;
+
+export const CheckedSuperchat = (index: number) => ({
+  type: CHECKED_SUPERCHAT,
+  index,
 });

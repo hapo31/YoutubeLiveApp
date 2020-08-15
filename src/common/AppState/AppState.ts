@@ -15,6 +15,7 @@ export type SuperChatInfo = {
   superChatColorInfo: SuperChatColorInfo;
   authorRaw: string;
   messageRaw: string;
+  checked: boolean;
 };
 
 type AppState = {

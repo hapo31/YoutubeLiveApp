@@ -1,6 +1,3 @@
-import { compose, applyMiddleware, createStore } from "redux";
-import WebcontentsPreloadMiddleware, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
-import createAppReducer from "@common/AppState/AppStateReducer";
 import { ipcRenderer } from "electron";
 import IPCEvent from "@common/events/IPCEvent";
 import sendDebugLog from "./debug/sendDebugLog";
