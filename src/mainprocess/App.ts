@@ -1,8 +1,10 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
-import { BrowserWindow, App, app, Menu, ipcMain } from "electron";
+import { BrowserWindow, App, app, ipcMain, Menu } from "electron";
 import { compose, applyMiddleware, createStore, StoreCreator, Action, Store } from "redux";
-import { mainMenuTemplate, chatboxMenuTemplate } from "./MenuTemplate";
+import { v4 as uuid } from "uuid";
+
+import buildMenu from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import IPCEvent from "@common/events/IPCEvent";
@@ -16,14 +18,30 @@ const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/"
 
 class MyApp {
   private appStore?: Store<AppState, AppStateAction>;
-  public window?: BrowserWindow;
+  public mainWindow?: BrowserWindow;
+
+  public childWindows: Map<string, BrowserWindow> = new Map();
+
   public chatBox?: BrowserWindow;
 
   private app: App;
 
+  private _isAlwaysOnTop = false;
+
+  public set isAlwaysOnTop(value: boolean) {
+    if (this.mainWindow) {
+      this.mainWindow.setAlwaysOnTop(value);
+    }
+    this._isAlwaysOnTop = value;
+  }
+
+  public get isAlwaysOnTop() {
+    return this._isAlwaysOnTop;
+  }
+
   constructor(app: App) {
     this.app = app;
-    this.app = this.app.on("ready", this.onReady);
+    this.app.on("ready", this.onReady);
     this.app.on("window-all-closed", this.onWindowAllClosed);
   }
 
@@ -36,8 +54,6 @@ class MyApp {
       superChats: [],
     };
     this.appStore = myCreateStore(createAppReducer(initialState));
-
-    Menu.setApplicationMenu(mainMenuTemplate);
 
     const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YoutubeLiveApp",
@@ -53,19 +69,22 @@ class MyApp {
 
     this.registIPCEventListeners();
 
-    this.window = new BrowserWindow(windowOption);
+    const menus = buildMenu();
 
-    this.window.loadURL(initialState.nowUrl);
+    this.mainWindow = this.createWindow(windowOption);
+
+    this.mainWindow.loadURL(initialState.nowUrl);
+    this.mainWindow.setMenu(menus.mainMenuTemplate);
 
     const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     console.log("Loaded preload.js");
-    this.window?.webContents.executeJavaScript(preloadJSCode);
+    this.mainWindow?.webContents.executeJavaScript(preloadJSCode);
 
     // const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
     // this.window?.webContents.executeJavaScript(chatboxJSCode);
 
-    this.window.webContents.on("new-window", this.webContentsOnNewWindow(windowOption));
-    this.window.on("close", () => {
+    this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow(windowOption, menus));
+    this.mainWindow.on("close", () => {
       if (this.chatBox && !this.chatBox.isDestroyed()) {
         this.chatBox.close();
         this.chatBox = undefined;
@@ -73,7 +92,7 @@ class MyApp {
     });
 
     if (isDebug) {
-      this.window.webContents.openDevTools();
+      this.mainWindow.webContents.openDevTools();
     }
   };
 
@@ -81,7 +100,7 @@ class MyApp {
     this.app.quit();
   };
 
-  private webContentsOnNewWindow = (windowOptions: Electron.BrowserWindowConstructorOptions) => {
+  private webContentsOnNewWindow = (windowOptions: Electron.BrowserWindowConstructorOptions, menus: ReturnType<typeof buildMenu>) => {
     return (event: Electron.NewWindowEvent, url: string) => {
       event.preventDefault();
       console.log({ url });
@@ -95,8 +114,9 @@ class MyApp {
       if (url.indexOf("live_chat?") < 0) {
         return;
       }
-      this.chatBox = new BrowserWindow({
+      this.chatBox = this.createWindow({
         ...windowOptions,
+        parent: this.mainWindow,
         width: 600,
         height: 700,
         frame: isDebug,
@@ -106,7 +126,7 @@ class MyApp {
         show: isDebug,
       });
       this.appStore?.dispatch(ResetSuperchatList());
-      this.chatBox.setMenu(chatboxMenuTemplate);
+      this.chatBox.setMenu(menus.chatboxMenuTemplate);
       this.chatBox.loadURL(url);
       const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
       this.chatBox.webContents.on("did-finish-load", () => {
@@ -143,6 +163,16 @@ class MyApp {
 
   private loadJSCode(path: string) {
     return readFileSync(path).toString("utf-8");
+  }
+
+  public createWindow(windowOption?: Electron.BrowserWindowConstructorOptions) {
+    const window = new BrowserWindow(windowOption);
+    const id = uuid();
+    window.addListener("closed", () => {
+      this.childWindows.delete(id);
+    });
+    this.childWindows.set(id, window);
+    return window;
   }
 }
 

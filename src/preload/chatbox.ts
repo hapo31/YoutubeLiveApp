@@ -1,14 +1,11 @@
-import { compose, applyMiddleware, createStore } from "redux";
-import RendererProcessMiddleware, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
-import createAppReducer from "@common/AppState/AppStateReducer";
 import attachChatBox from "./chat/attachChatBox";
 import sendDebugLog from "./debug/sendDebugLog";
 import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
 import { SuperChatInfo } from "@common/AppState/AppState";
+import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware";
 
 (async () => {
-  const myCreateStore = compose(applyMiddleware(RendererProcessMiddleware()))(createStore);
-  const store = myCreateStore(createAppReducer(await requestInitialState()));
+  const store = await createSharedStore();
 
   function init() {
     try {

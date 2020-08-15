@@ -1,12 +1,16 @@
-import { Middleware, Action } from "redux";
+import { Middleware, Action, Dispatch, AnyAction, compose, applyMiddleware, createStore } from "redux";
 import { ipcRenderer } from "electron";
 import AppState from "@common/AppState/AppState";
 import IPCEvent from "@events/IPCEvent";
-export default function RendererProcessMiddleware(): Middleware {
+import createAppReducer from "@common/AppState/AppStateReducer";
+import { RendererInitialize } from "@common/AppState/Actions/AppStateAction";
+function WebcontentsPreloadMiddleware(): Middleware {
   return (store) => (next) => (action: Action) => {
-    if (!ipcRenderer.eventNames().some((name) => name === IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD)) {
-      ipcRenderer.addListener(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action) => {
+    console.log(ipcRenderer.eventNames());
+    if (ipcRenderer.eventNames().every((name) => name !== IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN)) {
+      ipcRenderer.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN, (_, action: Action) => {
         next(action);
+        console.log(action);
       });
     }
     next(action);
@@ -22,4 +26,12 @@ export async function requestInitialState() {
 
     ipcRenderer.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD);
   });
+}
+
+export default async function createSharedStore() {
+  const myCreateStore = compose(applyMiddleware(WebcontentsPreloadMiddleware()))(createStore);
+  const store = myCreateStore(createAppReducer(await requestInitialState()));
+  store.dispatch(RendererInitialize());
+
+  return store;
 }
