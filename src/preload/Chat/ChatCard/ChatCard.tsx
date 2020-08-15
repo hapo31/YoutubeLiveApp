@@ -84,6 +84,8 @@ const Purches = styled.div`
 
 const Message = styled.div`
   padding: 8px 16px;
+  display: flex;
+  align-items: center;
   background-color: ${(props: styledProps) => props.backgroundColor};
   color: ${(props: styledProps) => props.color};
   :hover {
