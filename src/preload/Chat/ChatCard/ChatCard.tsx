@@ -51,7 +51,7 @@ type styledProps = {
 };
 
 const Container = styled.div`
-  border: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "solid 3px blue" : "none")};
+  box-shadow: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "0 0 0 3px blue" : "none")};
   margin: 5px;
   border-radius: 10px;
   > img {
