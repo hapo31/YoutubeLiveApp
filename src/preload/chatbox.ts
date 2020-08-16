@@ -1,6 +1,6 @@
 import attachChatBox from "./chat/attachChatBox";
 import sendDebugLog from "./debug/sendDebugLog";
-import { ReceivedSuperchat } from "@common/AppState/Actions/AppStateAction";
+import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
 import { SuperChatInfo } from "@common/AppState/AppState";
 import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware";
 
@@ -18,12 +18,11 @@ import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware"
       }
 
       const handler = (element: HTMLElement) => {
-        console.log("rr");
         if (element.localName !== "yt-live-chat-paid-message-renderer") {
           return;
         }
         const superChatInfo = parseSuperChatElement(element);
-        store.dispatch(ReceivedSuperchat(superChatInfo));
+        store.dispatch(AppendSuperchat(superChatInfo));
       };
 
       attachChatBox(handler);
@@ -42,7 +41,6 @@ function parseSuperChatElement(element: HTMLElement): SuperChatInfo {
   const message = element.querySelector("#message");
 
   const matchResults = element.getAttribute("style")?.match(/(rgba\(\d+,\d+,\d+,\d\.?\d*\))/g);
-  console.log({ purchase });
 
   if (!matchResults) {
     throw purchase;
