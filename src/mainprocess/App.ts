@@ -29,7 +29,7 @@ class MyApp {
     return this._channelId;
   }
 
-  private _isAlwaysOnTop = false;
+  private _isAlwaysOnTop = true;
 
   public set isAlwaysOnTop(value: boolean) {
     if (this.mainWindow) {
@@ -78,7 +78,6 @@ class MyApp {
     const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YoutubeLiveApp",
       acceptFirstMouse: true,
-      alwaysOnTop: true,
       width: 1400,
       height: 900,
       webPreferences: {
@@ -92,6 +91,7 @@ class MyApp {
     const menus = buildMenu();
 
     this.mainWindow = this.createWindow("MainWindow", windowOption);
+    this.isAlwaysOnTop = true;
 
     this.mainWindow.loadURL(initialState.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
