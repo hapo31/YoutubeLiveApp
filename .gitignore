@@ -4,7 +4,7 @@ yarn-error.log
 TAKE-win32-x64
 config.json
 *.zip
-YoutubeLiveApp-win32-x64
+YoutubeLiveApp-*
 
 .save/*
 !.save/.gitkeep
