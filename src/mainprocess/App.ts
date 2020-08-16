@@ -1,8 +1,7 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, ipcMain, Menu } from "electron";
-import { compose, applyMiddleware, createStore, StoreCreator, Action, Store } from "redux";
-import { v4 as uuid } from "uuid";
+import { compose, applyMiddleware, createStore, StoreCreator, Action, Store, AnyAction } from "redux";
 
 import buildMenu from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
@@ -13,7 +12,7 @@ import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
 import resumeData from "./resumeData";
 
-const isDebug = process.env.NODE_ENV == "development";
+export const isDebug = process.env.NODE_ENV == "development";
 const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
 
 class MyApp {
@@ -41,6 +40,13 @@ class MyApp {
     this.app = app;
     this.app.on("ready", this.onReady);
     this.app.on("window-all-closed", this.onWindowAllClosed);
+  }
+
+  public dispatch(action: AnyAction) {
+    if (this.appStore == null) {
+      return;
+    }
+    this.appStore.dispatch(action);
   }
 
   private onReady = () => {
