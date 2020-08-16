@@ -51,9 +51,7 @@ type styledProps = {
 };
 
 const Container = styled.div`
-  border: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "solid 3px blue" : "solid 3px rgba(0,0,0,0)")};
-  z-index: 5;
-  background-color: rgba(0, 0, 0, 0);
+  box-shadow: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "0 0 0 3px blue" : "none")};
   margin: 5px;
   > img {
     height: 24px;
