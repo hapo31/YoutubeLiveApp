@@ -8,16 +8,16 @@ export type AppConfig = {
 
 type SaveData = {
   nowUrl: string;
+  channelId: string;
 };
 
-const youtubeChannelBaseURL = "https://studio.youtube.com/channel";
+const youtubeChannelBaseURL = "https://studio.youtube.com";
 
-export default function resumeData(configFilePath: string, appStateFilePath: string) {
+export default function resumeData(appStateFilePath: string) {
   try {
     const recentState = JSON.parse(readFileSync(appStateFilePath).toString("utf-8")) as SaveData;
     return recentState;
   } catch (e) {
-    const config = JSON.parse(readFileSync(configFilePath).toString()) as AppConfig;
-    return createInitialState(`${youtubeChannelBaseURL}/${config.channelId}/livestreaming/stream`);
+    return createInitialState("https://studio.youtube.com/");
   }
 }

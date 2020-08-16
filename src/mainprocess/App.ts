@@ -23,6 +23,12 @@ class MyApp {
 
   private app: App;
 
+  private _channelId = "";
+
+  public get channelId() {
+    return this._channelId;
+  }
+
   private _isAlwaysOnTop = false;
 
   public set isAlwaysOnTop(value: boolean) {
@@ -42,6 +48,15 @@ class MyApp {
     this.app.on("window-all-closed", this.onWindowAllClosed);
   }
 
+  public createWindow(id: string, windowOption?: Electron.BrowserWindowConstructorOptions) {
+    const window = new BrowserWindow(windowOption);
+    window.addListener("closed", () => {
+      this.childWindows.delete(id);
+    });
+    this.childWindows.set(id, window);
+    return window;
+  }
+
   public dispatch(action: AnyAction) {
     if (this.appStore == null) {
       return;
@@ -52,9 +67,10 @@ class MyApp {
   private onReady = () => {
     const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
-    const saveData = resumeData("./config.json", ".save/app.json");
+    const saveData = resumeData(".save/app.json");
     const initialState = {
       nowUrl: saveData.nowUrl,
+      channelId: saveData.channelId,
       superChats: [],
     };
     this.appStore = myCreateStore(createAppReducer(initialState));
@@ -84,27 +100,38 @@ class MyApp {
     console.log("Loaded preload.js");
     this.mainWindow?.webContents.executeJavaScript(preloadJSCode);
 
-    // const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
-    // this.window?.webContents.executeJavaScript(chatboxJSCode);
-
-    const videoIdParseRegExp = /https:\/\/studio.youtube\.com\/video\/(\w+)\/livestreaming/;
+    const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
+    const channelIdTest = /https:\/\/studio\.youtube\.com\/channel\/(\w+)\/?/;
 
     this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow(windowOption, menus));
     this.mainWindow.webContents.on("did-navigate-in-page", (event, url) => {
+      // ページが遷移されるごとにstateの保存などを行う
+      const state = this.appStore?.getState();
       console.log({ "did-navigate-in-page": url });
-      if (!videoIdParseRegExp.test(url)) {
-        return;
-      }
-      const result = videoIdParseRegExp.exec(url);
-      if (result == null) {
-        // 何かの間違い
-        return;
-      }
-      console.log({ result });
-      const videoId = result[1];
 
-      this.openChatBox(videoId, windowOption, menus.chatboxMenuTemplate);
+      const resultArray = channelIdTest.exec(url);
+      console.log({ resultArray });
+      if (resultArray != null) {
+        this._channelId = resultArray[1];
+
+        const stateBefore = this.appStore?.getState();
+        console.log({ stateBefore });
+        this.appStore?.dispatch(ChangeURLAction(url));
+        const stateAfter = this.appStore?.getState();
+        console.log({ stateAfter });
+      }
+
+      const result = videoIdParseRegExp.exec(url);
+      if (result != null) {
+        console.log({ result });
+        const videoId = result[1];
+
+        this.openChatBox(videoId, windowOption, menus.chatboxMenuTemplate);
+      }
+      const JSONstring = JSON.stringify(state);
+      writeFileSync(".save/app.json", JSONstring);
     });
+
     this.mainWindow.on("close", () => {
       this.childWindows.forEach((window, key) => {
         if (key !== "MainWindow" && !window.isDestroyed()) {
@@ -168,28 +195,16 @@ class MyApp {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.appStore?.dispatch(action as any);
     });
-
-    ipcMain.on(IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD, (_, url: string) => {
-      console.log({ "IPCEvent.NavigationChange.NAVIGATION_PAGE_FROM_PRELOAD": url });
-      this.appStore?.dispatch(ChangeURLAction(url));
-      const state = { nowUrl: url };
-
-      const JSONstring = JSON.stringify(state);
-      writeFileSync(".save/app.json", JSONstring);
-    });
   }
 
   private loadJSCode(path: string) {
     return readFileSync(path).toString("utf-8");
   }
 
-  public createWindow(id: string, windowOption?: Electron.BrowserWindowConstructorOptions) {
-    const window = new BrowserWindow(windowOption);
-    window.addListener("closed", () => {
-      this.childWindows.delete(id);
-    });
-    this.childWindows.set(id, window);
-    return window;
+  private saveAppData() {
+    const state = this.appStore?.getState();
+    const JSONstring = JSON.stringify(state);
+    writeFileSync(".save/app.json", JSONstring);
   }
 }
 

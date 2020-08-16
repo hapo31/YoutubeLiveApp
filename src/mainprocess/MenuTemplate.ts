@@ -1,7 +1,6 @@
 import { Menu, BrowserWindow, shell, ipcMain } from "electron";
 import { v4 as uuid } from "uuid";
 
-import config from "../../config.json";
 import path from "path";
 import contextMenu from "electron-context-menu";
 import App, { isDebug } from "./App";
@@ -17,14 +16,14 @@ export default function buildMenu() {
             label: "ライブ配信 - Youtube Studio(Ctrl+1)",
             accelerator: "CmdOrCtrl+1",
             click: (__item, focusedWindow) => {
-              focusedWindow.loadURL(`https://studio.youtube.com/channel/${config.channelId}/livestreaming/stream`);
+              focusedWindow.loadURL(`https://studio.youtube.com/channel/${App.channelId}/livestreaming/stream`);
             },
           },
           {
             label: "チャンネルのダッシュボード(Ctrl+2)",
             accelerator: "CmdOrCtrl+2",
             click: (__item, focusedWindow) => {
-              focusedWindow.loadURL(`https://studio.youtube.com/channel/${config.channelId}/`);
+              focusedWindow.loadURL(`https://studio.youtube.com/channel/${App.channelId}/`);
             },
           },
         ],
