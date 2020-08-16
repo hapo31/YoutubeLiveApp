@@ -33,8 +33,8 @@
 
 ### Require
 
-Node.js >= 12.13.1
-yarn(recommended)
+- Node.js >= 12.13.1
+- yarn(recommended)
 
 ## Develop
 
