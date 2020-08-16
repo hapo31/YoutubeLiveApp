@@ -52,7 +52,10 @@ type styledProps = {
 
 const Container = styled.div`
   box-shadow: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "0 0 0 3px blue" : "none")};
-  margin: 5px;
+  margin: 8px;
+  :hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
   > img {
     height: 24px;
     width: 24px;

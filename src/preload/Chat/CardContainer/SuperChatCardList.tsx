@@ -22,7 +22,7 @@ export default (props: Props) => (
 const Container = styled.div``;
 
 const ChatCardContainer = styled.div`
-  margin-top: 50px;
+  margin-top: 55px;
 `;
 
 const SuperChatCount = styled.div`
