@@ -1,5 +1,6 @@
 import { readFileSync, mkdirSync } from "fs";
 import createInitialState from "./getInitialState";
+import { SuperChatInfo } from "@common/AppState/AppState";
 
 export type AppConfig = {
   channelId: string;
@@ -8,6 +9,7 @@ export type AppConfig = {
 type SaveData = {
   nowUrl: string;
   channelId: string;
+  superChats: Record<string, SuperChatInfo[]>;
 };
 
 const appStateFilePath = ".save/app.json";

@@ -4,6 +4,8 @@ import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
 import { SuperChatInfo } from "@common/AppState/AppState";
 import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware";
 
+const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
+
 (async () => {
   const store = await createSharedStore();
 
@@ -22,7 +24,11 @@ import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware"
           return;
         }
         const superChatInfo = parseSuperChatElement(element);
-        store.dispatch(AppendSuperchat(superChatInfo));
+        const result = videoIdParseRegExp.exec(store.getState().nowUrl);
+        if (result) {
+          const videoId = result[1];
+          store.dispatch(AppendSuperchat(videoId, superChatInfo));
+        }
       };
 
       attachChatBox(handler);

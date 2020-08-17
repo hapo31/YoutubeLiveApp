@@ -20,7 +20,7 @@ export type SuperChatInfo = {
 
 type AppState = {
   nowUrl: string;
-  superChats: SuperChatInfo[];
+  superChats: Record<string, SuperChatInfo[]>;
 };
 
 export default AppState;

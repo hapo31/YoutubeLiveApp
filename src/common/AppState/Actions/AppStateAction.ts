@@ -1,8 +1,6 @@
 import { SuperChatInfo } from "../AppState";
 
-export type Actions = ReturnType<
-  typeof ChangeURLAction | typeof AppendSuperchat | typeof ResetSuperchatList | typeof RendererInitialize | typeof CheckedSuperchat
->;
+export type Actions = ReturnType<typeof ChangeURLAction | typeof AppendSuperchat | typeof RendererInitialize | typeof CheckedSuperchat>;
 
 export const CHANGE_URL = "AppStateAction.CHANGE_URL" as const;
 
@@ -13,17 +11,11 @@ export const ChangeURLAction = (url: string) => ({
 
 export const APPEND_SUPERCHAT = "AppStateAction.APPEND_SUPERCHAT" as const;
 
-export const AppendSuperchat = (superChat: SuperChatInfo) => ({
+export const AppendSuperchat = (videoId: string, superChat: SuperChatInfo) => ({
   type: APPEND_SUPERCHAT,
+  videoId,
   superChat,
 });
-
-export const RESET_SUPERCHAT_LIST = "AppStateAction.RESET_SUPERCHAT_LIST" as const;
-
-export const ResetSuperchatList = () => ({
-  type: RESET_SUPERCHAT_LIST,
-});
-
 export const RENDERER_INITIALIZE = "AppStateAction.RENDER_INITIALIZE" as const;
 
 export const RendererInitialize = () => ({
@@ -32,7 +24,8 @@ export const RendererInitialize = () => ({
 
 export const CHECKED_SUPERCHAT = "AppStateAction.CHECKED_SUPERCHAT" as const;
 
-export const CheckedSuperchat = (index: number) => ({
+export const CheckedSuperchat = (videoId: string, index: number) => ({
   type: CHECKED_SUPERCHAT,
+  videoId,
   index,
 });

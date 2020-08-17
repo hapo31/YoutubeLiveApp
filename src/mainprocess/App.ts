@@ -7,16 +7,17 @@ import buildMenu from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import IPCEvent from "@common/events/IPCEvent";
-import { Actions as AppStateAction, ChangeURLAction, ResetSuperchatList } from "@common/AppState/Actions/AppStateAction";
+import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
 import resumeData from "./resumeData";
 
 export const isDebug = process.env.NODE_ENV == "development";
 const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
+export const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
 class MyApp {
-  private appStore?: Store<AppState, AppStateAction>;
+  private appStore: Store<AppState, AppStateAction>;
   public mainWindow?: BrowserWindow;
 
   public childWindows: Map<string, BrowserWindow> = new Map();
@@ -24,6 +25,10 @@ class MyApp {
   private app: App;
 
   private _channelId = "";
+
+  public get state() {
+    return this.appStore.getState();
+  }
 
   public get channelId() {
     return this._channelId;
@@ -46,6 +51,10 @@ class MyApp {
     this.app = app;
     this.app.on("ready", this.onReady);
     this.app.on("window-all-closed", this.onWindowAllClosed);
+    const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
+
+    const initialState = resumeData();
+    this.appStore = myCreateStore(createAppReducer(initialState));
   }
 
   public createWindow(id: string, windowOption?: Electron.BrowserWindowConstructorOptions) {
@@ -65,15 +74,6 @@ class MyApp {
   }
 
   private onReady = () => {
-    const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
-
-    const saveData = resumeData();
-    const initialState = {
-      nowUrl: saveData.nowUrl,
-      superChats: [],
-    };
-    this.appStore = myCreateStore(createAppReducer(initialState));
-
     const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YoutubeLiveApp",
       acceptFirstMouse: true,
@@ -92,13 +92,11 @@ class MyApp {
     this.mainWindow = this.createWindow("MainWindow", windowOption);
     this.isAlwaysOnTop = true;
 
-    this.mainWindow.loadURL(initialState.nowUrl);
+    this.mainWindow.loadURL(this.appStore.getState().nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
     const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
     this.mainWindow?.webContents.executeJavaScript(preloadJSCode);
-
-    const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
     const willChangePageHanlder = (_event: Electron.Event, url: string) => {
       if (url === "https://www.youtube.com/") {

@@ -9,20 +9,20 @@ export default function createAppReducer(initialState: AppState) {
           ...state,
           nowUrl: action.url,
         };
-      case AppStateAction.APPEND_SUPERCHAT:
+      case AppStateAction.APPEND_SUPERCHAT: {
+        const superChats = state.superChats;
+        if (superChats[action.videoId] == null) {
+          superChats[action.videoId] = [action.superChat];
+        } else {
+          superChats[action.videoId].push(action.superChat);
+        }
         return {
           ...state,
-          superChats: [...state.superChats, action.superChat],
+          superChats,
         };
-
-      case AppStateAction.RESET_SUPERCHAT_LIST:
-        return {
-          ...state,
-          superChats: [],
-        };
-
+      }
       case AppStateAction.CHECKED_SUPERCHAT: {
-        state.superChats[action.index].checked = true;
+        state.superChats[action.videoId][action.index].checked = true;
         return {
           ...state,
         };
