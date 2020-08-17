@@ -47,76 +47,35 @@ export default function buildMenu() {
             },
           },
           {
-            label: "開発者ツールを開く",
-            visible: isDebug,
-            click: (__item, focusedWindow) => {
-              focusedWindow.webContents.openDevTools();
-            },
-          },
-        ],
-      },
-    ]),
-    chatboxMenuTemplate: Menu.buildFromTemplate([
-      {
-        label: "ツール",
-        submenu: [
-          {
             label: "スパチャ一覧を開く",
-            click: (__item: unknown, focusedWindow?: BrowserWindow) => {
-              if (focusedWindow) {
-                const childs = focusedWindow.getChildWindows();
-                if (childs.length >= 1) {
-                  return;
-                }
-                const window = App.createWindow(uuid(), {
-                  parent: focusedWindow,
-                  acceptFirstMouse: true,
-                  alwaysOnTop: true,
-                  width: 600,
-                  minWidth: 600,
-                  height: 700,
-                  webPreferences: {
-                    webviewTag: true,
-                    nodeIntegration: true,
-                  },
-                });
-                if (isDebug) {
-                  contextMenu({
-                    window,
-                    prepend: (defaultAction, params, browserWindow) => [
-                      {
-                        label: "test",
-                        visible: params.mediaType === "none",
-                        click: () => {
-                          shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`);
-                        },
-                      },
-                    ],
-                  });
-                }
-
-                window.setMenu(null);
-                window.loadFile(path.resolve(__dirname, "superchat.html"));
+            click: (__item: unknown, mainWindow: BrowserWindow) => {
+              const childs = mainWindow.getChildWindows();
+              if (childs.length >= 1) {
+                return;
+              }
+              const window = App.createWindow(uuid(), {
+                parent: mainWindow,
+                acceptFirstMouse: true,
+                alwaysOnTop: true,
+                width: 600,
+                minWidth: 600,
+                height: 700,
+                webPreferences: {
+                  webviewTag: true,
+                  nodeIntegration: true,
+                },
+              });
+              window.setMenu(null);
+              window.loadFile(path.resolve(__dirname, "superchat.html"));
+              if (isDebug) {
                 window.webContents.openDevTools();
               }
             },
           },
           {
-            label: "CSSを適用する",
-            visible: isDebug,
-            click: (__item: unknown, focusedWindow: BrowserWindow) => {
-              focusedWindow.webContents.openDevTools();
-            },
-          },
-        ],
-      },
-      {
-        label: "困ったとき",
-        visible: isDebug,
-        submenu: [
-          {
             label: "開発者ツールを開く",
-            click: (__item: unknown, focusedWindow: BrowserWindow) => {
+            visible: isDebug,
+            click: (__item, focusedWindow) => {
               focusedWindow.webContents.openDevTools();
             },
           },
@@ -142,6 +101,32 @@ export default function buildMenu() {
                   },
                 })
               );
+            },
+          },
+        ],
+      },
+    ]),
+    chatboxMenuTemplate: Menu.buildFromTemplate([
+      {
+        label: "ツール",
+        submenu: [
+          {
+            label: "CSSを適用する",
+            visible: isDebug,
+            click: (__item: unknown, focusedWindow: BrowserWindow) => {
+              focusedWindow.webContents.openDevTools();
+            },
+          },
+        ],
+      },
+      {
+        label: "困ったとき",
+        visible: isDebug,
+        submenu: [
+          {
+            label: "開発者ツールを開く",
+            click: (__item: unknown, focusedWindow: BrowserWindow) => {
+              focusedWindow.webContents.openDevTools();
             },
           },
         ],

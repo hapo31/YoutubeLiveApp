@@ -92,14 +92,15 @@ class MyApp {
     this.mainWindow = this.createWindow("MainWindow", windowOption);
     this.isAlwaysOnTop = true;
 
-    this.mainWindow.loadURL(initialState.nowUrl, {
-      userAgent: "Chrome",
-    });
+    this.mainWindow.loadURL(initialState.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
     const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
+    const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
     this.mainWindow?.webContents.executeJavaScript(preloadJSCode);
 
-    const willChangePageHanlder = (event: Electron.Event, url: string) => {
+    const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
+
+    const willChangePageHanlder = (_event: Electron.Event, url: string) => {
       if (url === "https://www.youtube.com/") {
         console.log("detect www.youtube.com");
         url = "https://studio.youtube.com/";
@@ -115,13 +116,23 @@ class MyApp {
       this.mainWindow?.webContents.loadURL(url);
     };
 
-    this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow(windowOption, menus));
+    this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow());
     this.mainWindow.webContents.on("will-redirect", willChangePageHanlder);
     this.mainWindow.webContents.on("will-navigate", willChangePageHanlder);
 
-    this.mainWindow.webContents.on("did-navigate-in-page", (event, url) => {
+    const didNavigateHandler = (event: Electron.Event, url: string) => {
+      const videoIdResult = videoIdParseRegExp.exec(url);
+      if (videoIdResult) {
+        this.mainWindow?.webContents.executeJavaScript(chatboxJSCode);
+        console.log("execute chatbox.js");
+      }
+      console.log({ url });
+      this.dispatch(ChangeURLAction(url));
       this.saveAppData();
-    });
+    };
+
+    this.mainWindow.webContents.on("did-navigate", didNavigateHandler);
+    this.mainWindow.webContents.on("did-navigate-in-page", didNavigateHandler);
 
     this.mainWindow.on("close", () => {
       this.childWindows.forEach((window, key) => {
@@ -129,6 +140,8 @@ class MyApp {
           window.close();
         }
       });
+
+      this.saveAppData();
     });
   };
 
@@ -136,7 +149,7 @@ class MyApp {
     this.app.quit();
   };
 
-  private webContentsOnNewWindow = (windowOptions: Electron.BrowserWindowConstructorOptions, menus: ReturnType<typeof buildMenu>) => {
+  private webContentsOnNewWindow = () => {
     return (event: Electron.NewWindowEvent, url: string) => {
       event.preventDefault();
 
@@ -145,39 +158,8 @@ class MyApp {
         openBrowser(url);
         return;
       }
-
-      if (url.indexOf("live_chat?") < 0) {
-        return;
-      }
-
-      this.openChatBox(url, windowOptions, menus.chatboxMenuTemplate);
     };
   };
-
-  private openChatBox(videoId: string, windowOptions: Electron.BrowserWindowConstructorOptions, menu: Menu) {
-    if (this.childWindows.has(videoId)) {
-      return;
-    }
-    const chatBox = this.createWindow(videoId, {
-      ...windowOptions,
-      parent: this.mainWindow,
-      width: 600,
-      height: 700,
-      minWidth: undefined,
-      minHeight: undefined,
-      show: isDebug,
-    });
-    this.appStore?.dispatch(ResetSuperchatList());
-    chatBox.setMenu(menu);
-    chatBox.loadURL(`https://www.youtube.com/live_chat?is_popout=1&v=${videoId}`);
-    const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
-    chatBox.webContents.on("did-finish-load", () => {
-      chatBox.webContents.executeJavaScript(chatboxJSCode);
-    });
-    chatBox.webContents.on("will-navigate", () => {
-      this.appStore?.dispatch(ResetSuperchatList());
-    });
-  }
   private registIPCEventListeners() {
     ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
       event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore?.getState());
@@ -194,7 +176,6 @@ class MyApp {
 
   private saveAppData() {
     const state = this.appStore?.getState();
-    console.log({ saved: state });
     const JSONstring = JSON.stringify(state);
     writeFileSync(".save/app.json", JSONstring);
   }
