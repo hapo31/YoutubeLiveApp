@@ -81,6 +81,7 @@ export default function buildMenu() {
           },
           {
             label: "テストデータを流し込む",
+            visible: isDebug,
             click: (_, window) => {
               App.dispatch(
                 AppendSuperchat({
