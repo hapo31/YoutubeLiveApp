@@ -1,5 +1,4 @@
-import { readFileSync } from "fs";
-import AppState from "@common/AppState/AppState";
+import { readFileSync, mkdirSync } from "fs";
 import createInitialState from "./getInitialState";
 
 export type AppConfig = {
@@ -11,13 +10,14 @@ type SaveData = {
   channelId: string;
 };
 
-const youtubeChannelBaseURL = "https://studio.youtube.com";
+const appStateFilePath = ".save/app.json";
 
-export default function resumeData(appStateFilePath: string) {
+export default function resumeData() {
   try {
     const recentState = JSON.parse(readFileSync(appStateFilePath).toString("utf-8")) as SaveData;
     return recentState;
   } catch (e) {
+    mkdirSync(".save");
     return createInitialState("https://studio.youtube.com/");
   }
 }
