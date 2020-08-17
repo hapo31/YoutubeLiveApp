@@ -1,8 +1,9 @@
-import { Menu, BrowserWindow, shell, ipcMain } from "electron";
+import { Menu, BrowserWindow } from "electron";
 import { v4 as uuid } from "uuid";
+import copyPast from "copy-paste";
 
 import path from "path";
-import contextMenu from "electron-context-menu";
+// import contextMenu from "electron-context-menu";
 import App, { isDebug, videoIdParseRegExp } from "./App";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
 
@@ -44,6 +45,12 @@ export default function buildMenu() {
             checked: App.isAlwaysOnTop,
             click: () => {
               App.isAlwaysOnTop = !App.isAlwaysOnTop;
+            },
+          },
+          {
+            label: "チャットウインドウのURLをクリップボードにコピー",
+            click: () => {
+              copyPast.copy(`https://www.youtube.com/live_chat?is_popout=1&v=${App.videoId}`);
             },
           },
           {

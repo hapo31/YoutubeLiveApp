@@ -30,6 +30,15 @@ class MyApp {
     return this.appStore.getState();
   }
 
+  public get videoId() {
+    const r = videoIdParseRegExp.exec(this.state.nowUrl);
+    if (r) {
+      return r[1];
+    } else {
+      return null;
+    }
+  }
+
   public get channelId() {
     return this._channelId;
   }
