@@ -17,7 +17,11 @@ export default function resumeData() {
     const recentState = JSON.parse(readFileSync(appStateFilePath).toString("utf-8")) as SaveData;
     return recentState;
   } catch (e) {
-    mkdirSync(".save");
+    try {
+      mkdirSync(".save");
+    } catch (e) {
+      /* NOP */
+    }
     return createInitialState("https://studio.youtube.com/");
   }
 }
