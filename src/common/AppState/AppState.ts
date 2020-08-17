@@ -20,7 +20,6 @@ export type SuperChatInfo = {
 
 type AppState = {
   nowUrl: string;
-  channelId: string;
   superChats: SuperChatInfo[];
 };
 

@@ -67,10 +67,9 @@ class MyApp {
   private onReady = () => {
     const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
-    const saveData = resumeData(".save/app.json");
+    const saveData = resumeData();
     const initialState = {
       nowUrl: saveData.nowUrl,
-      channelId: saveData.channelId,
       superChats: [],
     };
     this.appStore = myCreateStore(createAppReducer(initialState));
@@ -100,51 +99,28 @@ class MyApp {
     const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     this.mainWindow?.webContents.executeJavaScript(preloadJSCode);
 
-    const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
-    const channelIdTest = /https:\/\/studio\.youtube\.com\/channel\/(\w+)\/?/;
+    const willChangePageHanlder = (event: Electron.Event, url: string) => {
+      if (url === "https://www.youtube.com/") {
+        console.log("detect www.youtube.com");
+        url = "https://studio.youtube.com/";
+      }
+
+      if (url.indexOf("https://accounts.google.com/signin/rejected") >= 0) {
+        console.log("detect rejected");
+        url = "https://studio.youtube.com/";
+      }
+
+      this.switchUserAgent(url);
+      console.log({ url, UA: this.mainWindow?.webContents.userAgent });
+      this.mainWindow?.webContents.loadURL(url);
+    };
 
     this.mainWindow.webContents.on("new-window", this.webContentsOnNewWindow(windowOption, menus));
-    this.mainWindow.webContents.on("will-redirect", (event, url) => {
-      console.log({ "will-redirect": url });
-      if (url.indexOf("accounts") < 0) {
-        this.mainWindow?.webContents.setUserAgent(
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
-        );
-      }
-
-      if (url.indexOf("accounts") >= 0) {
-        this.mainWindow?.webContents.setUserAgent("Chrome");
-      }
-    });
+    this.mainWindow.webContents.on("will-redirect", willChangePageHanlder);
+    this.mainWindow.webContents.on("will-navigate", willChangePageHanlder);
 
     this.mainWindow.webContents.on("did-navigate-in-page", (event, url) => {
-      // ページが遷移されるごとにstateの保存などを行う
-      const state = this.appStore?.getState();
-      console.log({ "did-navigate-in-page": url });
-
-      if (url.indexOf("accounts") >= 0) {
-        this.mainWindow?.webContents.setUserAgent("Chrome");
-      } else {
-        this.mainWindow?.webContents.setUserAgent(
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
-        );
-      }
-
-      const resultArray = channelIdTest.exec(url);
-      if (resultArray != null) {
-        this._channelId = resultArray[1];
-        this.appStore?.dispatch(ChangeURLAction(url));
-      }
-
-      const result = videoIdParseRegExp.exec(url);
-      if (result != null) {
-        console.log({ result });
-        const videoId = result[1];
-
-        this.openChatBox(videoId, windowOption, menus.chatboxMenuTemplate);
-      }
-      const JSONstring = JSON.stringify(state);
-      writeFileSync(".save/app.json", JSONstring);
+      this.saveAppData();
     });
 
     this.mainWindow.on("close", () => {
@@ -218,8 +194,19 @@ class MyApp {
 
   private saveAppData() {
     const state = this.appStore?.getState();
+    console.log({ saved: state });
     const JSONstring = JSON.stringify(state);
     writeFileSync(".save/app.json", JSONstring);
+  }
+
+  private switchUserAgent(url: string) {
+    if (url.indexOf("https://studio.") === 0 || url.indexOf("https://www.") === 0) {
+      this.mainWindow?.webContents.setUserAgent(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
+      );
+    } else {
+      this.mainWindow?.webContents.setUserAgent("Chrome");
+    }
   }
 }
 

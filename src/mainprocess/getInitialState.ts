@@ -4,6 +4,5 @@ export default function createInitialState(url: string): AppState {
   return {
     nowUrl: url,
     superChats: [],
-    channelId: "",
   };
 }

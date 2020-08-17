@@ -26,6 +26,13 @@ export default function buildMenu() {
               focusedWindow.loadURL(`https://studio.youtube.com/channel/${App.channelId}/`);
             },
           },
+          {
+            label: "更新",
+            accelerator: "CmdOrCtrl+R",
+            click: (__item, window) => {
+              window.reload();
+            },
+          },
         ],
       },
       {
