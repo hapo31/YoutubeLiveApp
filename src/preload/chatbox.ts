@@ -1,5 +1,5 @@
-import attachChatBox from "./chat/attachChatBox";
-import sendDebugLog from "./debug/sendDebugLog";
+import attachChatBox from "./Chat/attachChatBox";
+import sendDebugLog from "./Debug/sendDebugLog";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
 import { SuperChatInfo } from "@common/AppState/AppState";
 import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware";
