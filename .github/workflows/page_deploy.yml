@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1.4.1
         with:
-          node-version: "12.x"
+          node-version: "12.13.1"
       - name: Git configure
         run: |
           git config --local user.email "aciton@github.com"
