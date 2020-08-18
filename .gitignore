@@ -8,3 +8,5 @@ YoutubeLiveApp-*
 
 .save/*
 !.save/.gitkeep
+
+index.html
