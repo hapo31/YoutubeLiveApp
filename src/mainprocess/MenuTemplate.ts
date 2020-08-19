@@ -81,7 +81,7 @@ export default function buildMenu() {
           },
           {
             label: "開発者ツールを開く",
-            visible: isDebug,
+            visible: true,
             click: (__item, focusedWindow) => {
               focusedWindow.webContents.openDevTools();
             },
