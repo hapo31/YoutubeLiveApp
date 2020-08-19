@@ -42,7 +42,7 @@
 ## for Developers
 
 ### Github
-[https://happou31.github.io/YoutubeLiveApp/]
+https://github.com/happou31/YoutubeLiveApp/
 
 ### Require
 
