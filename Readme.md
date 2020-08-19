@@ -31,6 +31,7 @@
   - 僕のチャンネルは[ココ](https://www.youtube.com/channel/UCn9PQpGGbbcoq82TLnXYK5Q)です、何とはいいませんがよろしくお願いします。
 
 ##### *詳しい解説は現在準備中…*
+[解説動画もあるよ](https://www.youtube.com/watch?v=g88_v_hfOcQ&feature=youtu.be)
 
 ## アンインストール方法
 1. フォルダを丸ごと削除する
@@ -39,6 +40,9 @@
 4. (なんか他にあったら教えて)
 
 ## for Developers
+
+### Github
+[https://happou31.github.io/YoutubeLiveApp/]
 
 ### Require
 
