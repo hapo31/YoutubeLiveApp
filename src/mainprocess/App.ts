@@ -84,7 +84,7 @@ class MyApp {
 
   private onReady = () => {
     const windowOption: Electron.BrowserWindowConstructorOptions = {
-      title: "YoutubeLiveApp",
+      title: "YouTubeLiveApp",
       acceptFirstMouse: true,
       width: 1400,
       height: 900,
