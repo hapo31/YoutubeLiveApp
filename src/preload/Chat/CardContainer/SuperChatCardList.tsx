@@ -19,7 +19,9 @@ export default (props: Props) => (
   </Container>
 );
 
-const Container = styled.div``;
+const Container = styled.div`
+  user-select: none;
+`;
 
 const ChatCardContainer = styled.div`
   margin-top: 55px;
