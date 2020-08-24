@@ -1,7 +1,7 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
-import { BrowserWindow, App, app, ipcMain, Menu } from "electron";
-import { compose, applyMiddleware, createStore, StoreCreator, Action, Store, AnyAction, combineReducers } from "redux";
+import { BrowserWindow, App, app, ipcMain } from "electron";
+import { compose, applyMiddleware, createStore, Action, Store, AnyAction, combineReducers } from "redux";
 
 import buildMenu from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
