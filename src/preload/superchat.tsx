@@ -3,10 +3,11 @@ import { render } from "react-dom";
 import { Provider } from "react-redux";
 
 import CardContainerComponent from "./Chat/CardContainer/CardContainerComponent";
-import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware";
+import createSharedStore, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
+import createAppReducer from "@common/AppState/AppStateReducer";
 
 (async () => {
-  const store = await createSharedStore();
+  const store = createSharedStore(createAppReducer(await requestInitialState()));
 
   const target = document.getElementById("app");
   render(

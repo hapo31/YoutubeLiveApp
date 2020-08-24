@@ -1,5 +1,5 @@
 export default function attachChatBox(onReceiveChat: (element: HTMLElement) => void) {
-  const chatItemElement = document.getElementById("item-list");
+  const chatItemElement = document.getElementById("item-offset");
   if (!chatItemElement) {
     throw "chatItemElement is null";
   }

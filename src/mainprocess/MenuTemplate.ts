@@ -90,7 +90,7 @@ export default function buildMenu() {
             label: "テストデータを流し込む",
             visible: isDebug,
             click: (_, window) => {
-              const videoIdResult = videoIdParseRegExp.exec(App.state.nowUrl);
+              const videoIdResult = videoIdParseRegExp.exec(App.state.app.nowUrl);
               if (videoIdResult) {
                 const videoId = videoIdResult[1];
                 App.dispatch(

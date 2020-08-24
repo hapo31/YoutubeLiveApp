@@ -3,6 +3,7 @@ import SuperChatCardList from "./SuperChatCardList";
 import { useSelector, useDispatch } from "react-redux";
 import AppState from "@common/AppState/AppState";
 import { CheckedSuperchat } from "@common/AppState/Actions/AppStateAction";
+import { ChatState } from "@common/Chat/ChatState";
 
 const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
@@ -25,5 +26,5 @@ export default () => {
 };
 
 function useAppState() {
-  return useSelector((appState) => appState as AppState);
+  return useSelector(({ app: appState }: { app: AppState; chat: ChatState }) => appState as AppState);
 }

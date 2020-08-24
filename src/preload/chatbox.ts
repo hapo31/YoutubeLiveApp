@@ -1,43 +1,43 @@
 import attachChatBox from "./Chat/attachChatBox";
-import sendDebugLog from "./Debug/sendDebugLog";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
-import { SuperChatInfo } from "@common/AppState/AppState";
-import createSharedStore from "@common/Middlewares/WebcontentsPreloadMiddleware";
+import AppState, { SuperChatInfo } from "@common/AppState/AppState";
+import createSharedStore, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
+import createAppReducer from "@common/AppState/AppStateReducer";
+import createChatReducer from "@common/Chat/ChatStateReducer";
+import { initialState as chatInitialState, ChatState } from "@common/Chat/ChatState";
+import { AttachChat } from "@common/Chat/ChatStateActions";
+import { combineReducers } from "redux";
 
 const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
 (async () => {
-  const store = await createSharedStore();
+  const { app, chat }: { app: AppState; chat: ChatState } = await requestInitialState();
+  const reducer = combineReducers({ app: createAppReducer(app), chat: createChatReducer(chat) });
 
+  const store = createSharedStore(reducer);
+  store.subscribe(() => {
+    const state = store.getState();
+    if (state.chat.willInit && !state.chat.attached) {
+      store.dispatch(AttachChat());
+      init();
+    }
+  });
+
+  console.log("waiting...");
   function init() {
-    try {
-      const chat = document.querySelector("#items.yt-live-chat-item-list-renderer");
-      if (chat == null) {
-        setTimeout(() => {
-          init();
-        }, 1000);
+    attachChatBox((element: HTMLElement) => {
+      const state = store.getState();
+      if (element.localName !== "yt-live-chat-paid-message-renderer") {
         return;
       }
-
-      const handler = (element: HTMLElement) => {
-        if (element.localName !== "yt-live-chat-paid-message-renderer") {
-          return;
-        }
-        const superChatInfo = parseSuperChatElement(element);
-        const result = videoIdParseRegExp.exec(store.getState().nowUrl);
-        if (result) {
-          const videoId = result[1];
-          store.dispatch(AppendSuperchat(videoId, superChatInfo));
-        }
-      };
-
-      attachChatBox(handler);
-    } catch (e) {
-      sendDebugLog(e);
-    }
+      const superChatInfo = parseSuperChatElement(element);
+      const result = videoIdParseRegExp.exec(state.app.nowUrl);
+      if (result) {
+        const videoId = result[1];
+        store.dispatch(AppendSuperchat(videoId, superChatInfo));
+      }
+    });
   }
-
-  init();
 })();
 
 function parseSuperChatElement(element: HTMLElement): SuperChatInfo {

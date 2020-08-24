@@ -1,7 +1,7 @@
 import path from "path";
 import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, ipcMain, Menu } from "electron";
-import { compose, applyMiddleware, createStore, StoreCreator, Action, Store, AnyAction } from "redux";
+import { compose, applyMiddleware, createStore, StoreCreator, Action, Store, AnyAction, combineReducers } from "redux";
 
 import buildMenu from "./MenuTemplate";
 import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
@@ -11,13 +11,16 @@ import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Act
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
 import resumeData from "./resumeData";
+import { ChatState, initialState as chatInitialState } from "@common/Chat/ChatState";
+import { Actions as ChatStateActions, InitChat } from "@common/Chat/ChatStateActions";
+import createChatReducer from "@common/Chat/ChatStateReducer";
 
 export const isDebug = process.env.NODE_ENV == "development";
 const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
 export const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
 class MyApp {
-  private appStore: Store<AppState, AppStateAction>;
+  private store: Store<{ app: AppState; chat: ChatState }, AppStateAction | ChatStateActions>;
   public mainWindow?: BrowserWindow;
 
   public childWindows: Map<string, BrowserWindow> = new Map();
@@ -27,11 +30,11 @@ class MyApp {
   private _channelId = "";
 
   public get state() {
-    return this.appStore.getState();
+    return this.store.getState();
   }
 
   public get videoId() {
-    const r = videoIdParseRegExp.exec(this.state.nowUrl);
+    const r = videoIdParseRegExp.exec(this.state.app.nowUrl);
     if (r) {
       return r[1];
     } else {
@@ -60,10 +63,13 @@ class MyApp {
     this.app = app;
     this.app.on("ready", this.onReady);
     this.app.on("window-all-closed", this.onWindowAllClosed);
-    const myCreateStore: StoreCreator = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
 
     const initialState = resumeData();
-    this.appStore = myCreateStore(createAppReducer(initialState));
+    const reducer = combineReducers({ app: createAppReducer(initialState), chat: createChatReducer(chatInitialState) });
+
+    const myCreateStore = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
+
+    this.store = myCreateStore(reducer);
   }
 
   public createWindow(id: string, windowOption?: Electron.BrowserWindowConstructorOptions) {
@@ -76,13 +82,16 @@ class MyApp {
   }
 
   public dispatch(action: AnyAction) {
-    if (this.appStore == null) {
+    if (this.store == null) {
       return;
     }
-    this.appStore.dispatch(action);
+    this.store.dispatch(action);
   }
 
   private onReady = () => {
+    const state = this.store.getState();
+
+    console.log({ state });
     const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YoutubeLiveApp",
       acceptFirstMouse: true,
@@ -99,13 +108,17 @@ class MyApp {
     const menus = buildMenu();
 
     this.mainWindow = this.createWindow("MainWindow", windowOption);
+
+    if (isDebug) {
+      this.mainWindow.webContents.openDevTools();
+    }
+
     this.isAlwaysOnTop = true;
 
-    this.mainWindow.loadURL(this.appStore.getState().nowUrl);
+    this.mainWindow.loadURL(this.store.getState().app.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
-    const preloadJSCode = this.loadJSCode(path.resolve(preloadBasePath, "preload.js"));
     const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
-    this.mainWindow?.webContents.executeJavaScript(preloadJSCode);
+    this.mainWindow?.webContents.executeJavaScript(chatboxJSCode);
 
     const willChangePageHanlder = (_event: Electron.Event, url: string) => {
       if (url === "https://www.youtube.com/") {
@@ -127,11 +140,16 @@ class MyApp {
     this.mainWindow.webContents.on("will-redirect", willChangePageHanlder);
     this.mainWindow.webContents.on("will-navigate", willChangePageHanlder);
 
-    const didNavigateHandler = (event: Electron.Event, url: string) => {
+    const didNavigateHandler = (_: Electron.Event, url: string) => {
+      console.log({ "did-navigate": url });
       const videoIdResult = videoIdParseRegExp.exec(url);
       if (videoIdResult) {
-        this.mainWindow?.webContents.executeJavaScript(chatboxJSCode);
-        console.log("execute chatbox.js");
+        const { chat } = this.store.getState();
+        console.log({ chat });
+        if (!chat.attached) {
+          const videoId = videoIdResult[1];
+          this.store.dispatch(InitChat(videoId));
+        }
       }
       console.log({ url });
       this.dispatch(ChangeURLAction(url));
@@ -169,11 +187,11 @@ class MyApp {
   };
   private registIPCEventListeners() {
     ipcMain.on(IPCEvent.InitialState.CHANNEL_NAME_FROM_PRELOAD, (event) => {
-      event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.appStore?.getState());
+      event.sender.send(IPCEvent.InitialState.CHANNEL_NAME_FROM_MAIN, this.store?.getState());
     });
     ipcMain.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action<AppState>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.appStore?.dispatch(action as any);
+      this.store?.dispatch(action as any);
     });
   }
 
@@ -182,7 +200,7 @@ class MyApp {
   }
 
   private saveAppData() {
-    const state = this.appStore?.getState();
+    const { app: state } = this.store.getState();
     const JSONstring = JSON.stringify(state);
     writeFileSync(".save/app.json", JSONstring);
   }
