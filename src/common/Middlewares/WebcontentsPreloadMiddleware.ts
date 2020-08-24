@@ -7,7 +7,7 @@ function WebcontentsPreloadMiddleware(): Middleware {
   return (store) => (next) => (action: Action) => {
     if (ipcRenderer.eventNames().every((name) => name !== IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN)) {
       ipcRenderer.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_MAIN, (_, action: Action) => {
-        console.log({ WebcontentsPreloadMiddleware: action });
+        console.log({ type: action.type });
         next(action);
         console.log(action);
       });
