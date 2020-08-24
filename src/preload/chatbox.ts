@@ -1,10 +1,10 @@
-import attachChatBox from "./Chat/attachChatBox";
+import attachChatBox, { checkChatBoxVisible } from "./Chat/attachChatBox";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
 import AppState, { SuperChatInfo } from "@common/AppState/AppState";
 import createSharedStore, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import createChatReducer from "@common/Chat/ChatStateReducer";
-import { initialState as chatInitialState, ChatState } from "@common/Chat/ChatState";
+import { ChatState } from "@common/Chat/ChatState";
 import { AttachChat } from "@common/Chat/ChatStateActions";
 import { combineReducers } from "redux";
 
@@ -19,7 +19,12 @@ const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livest
     const state = store.getState();
     if (state.chat.willInit && !state.chat.attached) {
       store.dispatch(AttachChat());
-      init();
+      const timer = setInterval(() => {
+        if (checkChatBoxVisible()) {
+          init();
+          clearInterval(timer);
+        }
+      }, 100);
     }
   });
 

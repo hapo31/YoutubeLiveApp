@@ -31,3 +31,8 @@ export default function attachChatBox(onReceiveChat: (element: HTMLElement) => v
     observer.disconnect();
   };
 }
+
+export function checkChatBoxVisible() {
+  const chatItemElement = document.getElementById("item-offset");
+  return chatItemElement !== null;
+}
