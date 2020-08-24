@@ -14,7 +14,7 @@
     "test": "mocha -r tsconfig-paths/register -r ts-node/register tests/**/*.test.ts",
     "dev": "cross-env NODE_ENV=development webpack --watch --config ./webpack.config.js --mode development",
     "make:page": "node ./bin/page.js",
-    "build:win": "cross-env NODE_ENV=production webpack --config ./webpack.config.js --mode production && copy package.json dist\\ && electron-packager ./dist YoutubeLiveApp --platform=win32 --arch=x64 --icon=./images/icon.ico --electron-version=9.0.4 --overwrite && pushd YoutubeLiveApp-win32-x64"
+    "build:win": "echo This command is only for Windows CommandPrompt. && del /S /Q dist\\* && cross-env NODE_ENV=production webpack --config ./webpack.config.js --mode production && copy package.json dist\\ && electron-packager ./dist YoutubeLiveApp --platform=win32 --arch=x64 --icon=./images/icon.ico --electron-version=9.0.4 --overwrite && pushd YoutubeLiveApp-win32-x64"
   },
   "husky": {
     "hooks": {
