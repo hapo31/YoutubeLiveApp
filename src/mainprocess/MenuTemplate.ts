@@ -14,7 +14,7 @@ export default function buildMenu() {
         label: "ページ移動(1)",
         submenu: [
           {
-            label: "ライブ配信 - Youtube Studio(Ctrl+1)",
+            label: "ライブ配信 - YouTube Studio (Ctrl+1)",
             accelerator: "CmdOrCtrl+1",
             click: (__item, focusedWindow) => {
               focusedWindow.loadURL(`https://studio.youtube.com/channel/${App.channelId}/livestreaming/stream`);
