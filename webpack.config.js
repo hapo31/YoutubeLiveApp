@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
 const isDev = process.env.NODE_ENV !== "production";
-const fs = require("fs");
+
 /* eslint-enable */
 
 const outputPath = path.resolve(__dirname, "dist");
