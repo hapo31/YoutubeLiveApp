@@ -1,4 +1,4 @@
-# YTLH - YouTubeLiveHelper ver 0.22
+# YTLH - YouTubeLiveHelper
 
 このツールはYouTube Liveを楽にするための機能を詰め込んだサポートツールです。
 

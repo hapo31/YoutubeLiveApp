@@ -1,4 +1,4 @@
-# YTLH - YouTube Live Helper ver 0.22
+# YTLH - YouTube Live Helper
 
 [**Japanese**](README.md)
 
