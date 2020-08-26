@@ -1,4 +1,4 @@
-import { Menu, BrowserWindow } from "electron";
+import { Menu, BrowserWindow, dialog } from "electron";
 import { v4 as uuid } from "uuid";
 import copyPast from "copy-paste";
 
@@ -6,6 +6,8 @@ import path from "path";
 // import contextMenu from "electron-context-menu";
 import App, { isDebug, videoIdParseRegExp } from "./App";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
+import checkUpdate from "./check-update";
+import openBrowser from "./NativeBridge/OpenBrowser";
 
 export default function buildMenu() {
   return {
@@ -113,6 +115,28 @@ export default function buildMenu() {
                   })
                 );
               }
+            },
+          },
+        ],
+      },
+      {
+        label: "About",
+        submenu: [
+          {
+            label: "最新版の確認",
+            click: (_event, window) => {
+              checkUpdate(path.resolve(__dirname, "package.json")).then((versionInfo: string[]) => {
+                if (versionInfo.length == 2 && window) {
+                  const index = dialog.showMessageBoxSync(window, {
+                    message: `新しいバージョンが見つかりました ${versionInfo[0]} -> ${versionInfo[1]}`,
+                    buttons: ["ダウンロードページを開く", "このまま使う"],
+                  });
+
+                  if (index === 0) {
+                    openBrowser("https://github.com/happou31/YoutubeLiveApp/releases");
+                  }
+                }
+              });
             },
           },
         ],

@@ -16,7 +16,7 @@ import { Actions as ChatStateActions, InitChat } from "@common/Chat/ChatStateAct
 import createChatReducer from "@common/Chat/ChatStateReducer";
 
 export const isDebug = process.env.NODE_ENV == "development";
-const preloadBasePath = isDebug ? "./dist/scripts/" : "./resources/app/scripts/";
+export const resoucesBasePath = isDebug ? path.resolve(__dirname) : path.resolve(__dirname, "resources", "app");
 export const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
 class MyApp {
@@ -117,7 +117,7 @@ class MyApp {
 
     this.mainWindow.loadURL(this.store.getState().app.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
-    const chatboxJSCode = this.loadJSCode(path.resolve(preloadBasePath, "chatbox.js"));
+    const chatboxJSCode = this.loadJSCode(path.resolve(resoucesBasePath, "scripts", "chatbox.js"));
     this.mainWindow?.webContents.executeJavaScript(chatboxJSCode);
 
     const willChangePageHanlder = (_event: Electron.Event, url: string) => {
