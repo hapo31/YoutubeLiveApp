@@ -1,5 +1,5 @@
-<h1 id="ytlh---youtubelivehelper-ver-021b">YTLH - YouTubeLiveHelper ver 0.21b</h1>
-<p>このツールはYoutubeLiveを楽にするための機能を詰め込んだサポートツールです。</p>
+<h1 id="ytlh---youtubelivehelper">YTLH - YouTubeLiveHelper</h1>
+<p>このツールはYouTube Liveを楽にするための機能を詰め込んだサポートツールです。</p>
 <p>主に以下の機能があります。</p>
 <ul>
 <li>以前開いていた配信にすぐ戻れる機能</li>
@@ -9,19 +9,19 @@
 </ul>
 <p>また、以下の機能を予定しています。</p>
 <ul>
-<li>YoutubeLiveのチャット欄を固定のURLで表示できる機能</li>
+<li>YouTube Liveのチャット欄を固定のURLで表示できる機能</li>
 <li>コメント読み上げ機能(棒読みちゃん連携)</li>
 <li>配信の予定時間が近づいたら通知する機能</li>
 <li>プラグイン機能</li>
 </ul>
 <h2 id="インストール方法">インストール方法</h2>
 <ol>
-<li><a href="https://github.com/happou31/YoutubeLiveApp/releases">リリースページ</a>から最新版の zip をダウンロードして解凍する</li>
+<li><a href="https://github.com/happou31/YouTubeLiveApp/releases">リリースページ</a>から最新版の zip をダウンロードして解凍する</li>
 <li>終わり</li>
 </ol>
 <h2 id="使い方">使い方</h2>
 <ol>
-<li>Youtubeにログインする<br>ブラウザ上と同じようにログインしてください。<br>2段階認証を使っている場合は「Google認証アプリ」を使う方法を選んでください。<br>スマホの通知をタップする方法は現在動きません…(原因調査中)</li>
+<li>YouTubeにログインする<br>ブラウザ上と同じようにログインしてください。<br>2段階認証を使っている場合は「Google認証アプリ」を使う方法を選んでください。<br>スマホの通知をタップする方法は現在動きません…(原因調査中)</li>
 <li>ダッシュボードが開くので、そこから配信を作ったり、既に立っている配信管理ページを開く　</li>
 <li><em>スパチャ一覧表示は、ウインドウの「ツール」から開くことが出来ます。</em><ul>
 <li><strong>なお、本機能ですが僕自身のチャンネルが収益化されていないため十分なテストができておりません</strong>（疑似データを流すことは出来るのですが…）</li>
@@ -30,7 +30,7 @@
 </li>
 </ol>
 <h5 id="詳しい解説は現在準備中"><em>詳しい解説は現在準備中…</em></h5>
-<p><a href="https://www.youtube.com/watch?v=g88_v_hfOcQ&amp;feature=youtu.be">解説動画もあるよ</a></p>
+<p><a href="https://youtu.be/g88_v_hfOcQ">解説動画もあるよ</a></p>
 <h2 id="アンインストール方法">アンインストール方法</h2>
 <ol>
 <li>フォルダを丸ごと削除する</li>
@@ -39,25 +39,26 @@
 <li>(なんか他にあったら教えて)</li>
 </ol>
 <h2 id="for-developers">for Developers</h2>
-<h3 id="github">Github</h3>
-<p><a href="https://github.com/happou31/YoutubeLiveApp/">https://github.com/happou31/YoutubeLiveApp/</a></p>
-<h3 id="require">Require</h3>
+<h3 id="github">GitHub</h3>
+<p><a href="https://github.com/happou31/YouTubeLiveApp/">https://github.com/happou31/YouTubeLiveApp/</a></p>
+<h3 id="requirement">Requirement</h3>
 <ul>
 <li>Node.js &gt;= 12.13.1</li>
-<li>yarn(recommended)</li>
+<li>yarn (recommended)</li>
 </ul>
-<h2 id="develop">Develop</h2>
+<h2 id="development-environment">Development environment</h2>
 <ol>
-<li><p>Package install</p>
-<pre><code>$ yarn</code></pre>
-</li>
-<li><p>Develop build start</p>
-<pre><code class="language-bash">$ yarn dev</code></pre>
-</li>
-<li><p>Start debug</p>
-<pre><code>$ yarn start</code></pre>
-</li>
+<li>Install require packages</li>
 </ol>
+<pre><code>$ yarn</code></pre>
+<ol start="2">
+<li>Build development version</li>
+</ol>
+<pre><code class="language-bash">$ yarn dev</code></pre>
+<ol start="3">
+<li>Start debugging</li>
+</ol>
+<pre><code>$ yarn start</code></pre>
 <h2 id="build">Build</h2>
 <h3 id="for-windows-x86-or-x86_64">for Windows x86 or x86_64</h3>
 <pre><code class="language-powershell">&gt; yarn build:win</code></pre>
