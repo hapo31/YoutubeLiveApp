@@ -1,6 +1,6 @@
 {
   "name": "youtube_live",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": "happou31",
   "description": "app for youtube live console.",
   "main": "index.js",
