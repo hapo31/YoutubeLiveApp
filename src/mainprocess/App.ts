@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, ipcMain } from "electron";
 import { compose, applyMiddleware, createStore, Action, Store, AnyAction, combineReducers } from "redux";
@@ -16,14 +17,18 @@ import { Actions as ChatStateActions, InitChat } from "@common/Chat/ChatStateAct
 import createChatReducer from "@common/Chat/ChatStateReducer";
 
 export const isDebug = process.env.NODE_ENV == "development";
-export const resoucesBasePath = isDebug ? path.resolve(__dirname) : path.resolve(__dirname, "resources", "app");
+export const resoucesBasePath = isDebug ? path.resolve(".", "dist") : path.resolve("resources", "app");
 export const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
+
+export const packageJsonPath = isDebug ? path.resolve(".", "package.json") : path.resolve("resources", "app", "package.json");
 
 class MyApp {
   private store: Store<{ app: AppState; chat: ChatState }, AppStateAction | ChatStateActions>;
   public mainWindow?: BrowserWindow;
 
   public childWindows: Map<string, BrowserWindow> = new Map();
+
+  public readonly version: string;
 
   private app: App;
 
@@ -63,6 +68,11 @@ class MyApp {
     this.app = app;
     this.app.on("ready", this.onReady);
     this.app.on("window-all-closed", this.onWindowAllClosed);
+
+    const packageJson = fs.readFileSync(packageJsonPath);
+    const packageJsonObject = JSON.parse(packageJson.toString("utf-8"));
+
+    this.version = packageJsonObject.version;
 
     const initialState = resumeData();
     const reducer = combineReducers({ app: createAppReducer(initialState), chat: createChatReducer(chatInitialState) });

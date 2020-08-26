@@ -122,14 +122,16 @@ export default function buildMenu() {
       {
         label: "About",
         submenu: [
+          { label: `現在のバージョン: ${App.version}`, enabled: false },
           {
             label: "最新版の確認",
             click: (_event, window) => {
-              checkUpdate(path.resolve(__dirname, "package.json")).then((versionInfo: string[]) => {
+              checkUpdate(App.version).then((versionInfo: string[]) => {
                 if (versionInfo.length == 2 && window) {
                   const index = dialog.showMessageBoxSync(window, {
                     message: `新しいバージョンが見つかりました ${versionInfo[0]} -> ${versionInfo[1]}`,
                     buttons: ["ダウンロードページを開く", "このまま使う"],
+                    title: "アップデートのご案内",
                   });
 
                   if (index === 0) {
