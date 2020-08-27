@@ -92,29 +92,30 @@ export default function buildMenu() {
             label: "テストデータを流し込む",
             visible: isDebug,
             click: (_, window) => {
-              const videoIdResult = videoIdParseRegExp.exec(App.state.app.nowUrl);
-              if (videoIdResult) {
-                const videoId = videoIdResult[1];
-                App.dispatch(
-                  AppendSuperchat(videoId, {
-                    author: "テスト太郎",
-                    authorRaw: `<div id="author-name" class="style-scope yt-live-chat-paid-message-renderer">テスト太郎</div>`,
-                    message: "テスト太郎のメッセージです",
-                    messageRaw: `<div id="message" dir="auto" class="style-scope yt-live-chat-paid-message-renderer">テスト太郎のテストメッセージです<img class="emoji style-scope yt-live-chat-text-message-renderer" src="https://yt3.ggpht.com/atsy74xfRqDFS5NWvN_nJgvaAxAPmPnRQptCnMyRv_zopiocAmnXRH-ZLiw0P7QvsAHFc0c71A=w48-h48-c-k-nd" alt=":_aquaNEKO:" data-emoji-id="UC1opHUrw8rvnsadT-iGp7Cg/_GugXrySBJCQ_APTkKqIBg" shared-tooltip-text=":_aquaNEKO:" id="emoji-413"> </div>`,
-                    imgUrl: "https://yt3.ggpht.com/-rqF0Mu8H3k4/AAAAAAAAAAI/AAAAAAAAAAA/hpayIf9ySG4/s32-c-k-no-mo-rj-c0xffffff/photo.jpg",
-                    checked: false,
-                    purches: `＄1,000,000,000,000`,
-                    superChatColorInfo: {
-                      authorName: "rgb(0, 0, 0)",
-                      header: "rgb(255,255,0)",
-                      message: "rgb(0,0,0)",
-                      primary: "rgb(255, 0, 0)",
-                      secondary: "rgb(255, 255,0)",
-                      timestamp: "rgb(0, 0, 255)",
-                    },
-                  })
-                );
+              const videoIdResult = videoIdParseRegExp.exec(window.webContents.getURL());
+              if (!videoIdResult) {
+                return;
               }
+              const videoId = videoIdResult[1];
+              App.dispatch(
+                AppendSuperchat(videoId, {
+                  author: "テスト太郎",
+                  authorRaw: `<div id="author-name" class="style-scope yt-live-chat-paid-message-renderer">テスト太郎</div>`,
+                  message: "テスト太郎のメッセージです",
+                  messageRaw: `<div id="message" dir="auto" class="style-scope yt-live-chat-paid-message-renderer">テスト太郎のテストメッセージです<img class="emoji style-scope yt-live-chat-text-message-renderer" src="https://yt3.ggpht.com/atsy74xfRqDFS5NWvN_nJgvaAxAPmPnRQptCnMyRv_zopiocAmnXRH-ZLiw0P7QvsAHFc0c71A=w48-h48-c-k-nd" alt=":_aquaNEKO:" data-emoji-id="UC1opHUrw8rvnsadT-iGp7Cg/_GugXrySBJCQ_APTkKqIBg" shared-tooltip-text=":_aquaNEKO:" id="emoji-413"> </div>`,
+                  imgUrl: "https://yt3.ggpht.com/-rqF0Mu8H3k4/AAAAAAAAAAI/AAAAAAAAAAA/hpayIf9ySG4/s32-c-k-no-mo-rj-c0xffffff/photo.jpg",
+                  checked: false,
+                  purches: `＄1,000,000,000,000`,
+                  superChatColorInfo: {
+                    authorName: "rgb(0, 0, 0)",
+                    header: "rgb(255,255,0)",
+                    message: "rgb(0,0,0)",
+                    primary: "rgb(255, 0, 0)",
+                    secondary: "rgb(255, 255,0)",
+                    timestamp: "rgb(0, 0, 255)",
+                  },
+                })
+              );
             },
           },
         ],
