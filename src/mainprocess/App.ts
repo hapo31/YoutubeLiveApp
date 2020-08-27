@@ -19,7 +19,7 @@ import createChatReducer from "@common/Chat/ChatStateReducer";
 
 export const isDebug = process.env.NODE_ENV == "development";
 export const resoucesBasePath = isDebug ? path.resolve(".", "dist") : path.resolve("resources", "app");
-export const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
+export const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(.+)\/livestreaming/;
 
 export const packageJsonPath = isDebug ? path.resolve(".", "package.json") : path.resolve("resources", "app", "package.json");
 
@@ -74,7 +74,6 @@ class MyApp {
 
     const packageJson = fs.readFileSync(packageJsonPath);
     const packageJsonObject = JSON.parse(packageJson.toString("utf-8"));
-
     this.server = express();
 
     this.server.use((req, res, next) => {
@@ -89,7 +88,12 @@ class MyApp {
       res.header("Location", `https://www.youtube.com/live_chat?is_popout=1&v=${this.videoId}`);
       res.end();
     });
-    this.server.listen(25252);
+
+    // try {
+    //   this.server.listen(25252);
+    // } catch (e) {
+    //   console.error(e);
+    // }
 
     this.version = packageJsonObject.version;
 
