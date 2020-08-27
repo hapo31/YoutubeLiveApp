@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs";
 import { readFileSync, writeFileSync } from "fs";
 import { BrowserWindow, App, app, ipcMain } from "electron";
+import express from "express";
 import { compose, applyMiddleware, createStore, Action, Store, AnyAction, combineReducers } from "redux";
 
 import buildMenu from "./MenuTemplate";
@@ -33,6 +34,8 @@ class MyApp {
   private app: App;
 
   private _channelId = "";
+
+  private server: express.Application;
 
   public get state() {
     return this.store.getState();
@@ -71,6 +74,22 @@ class MyApp {
 
     const packageJson = fs.readFileSync(packageJsonPath);
     const packageJsonObject = JSON.parse(packageJson.toString("utf-8"));
+
+    this.server = express();
+
+    this.server.use((req, res, next) => {
+      res.header("Origin", "localhost:25252");
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
+
+    this.server.get("/chat", (req, res) => {
+      res.status(302);
+      res.header("Location", `https://www.youtube.com/live_chat?is_popout=1&v=${this.videoId}`);
+      res.end();
+    });
+    this.server.listen(25252);
 
     this.version = packageJsonObject.version;
 

@@ -31,6 +31,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/copy-paste": "^1.1.30",
+    "@types/express": "^4.17.7",
     "@types/mocha": "^7.0.2",
     "@types/node": "^14.6.0",
     "@types/react": "~16.9.38",
@@ -67,6 +68,7 @@
     "copy-paste": "https://github.com/PKief/node-copy-paste.git#adjust-platform-require",
     "electron-context-menu": "^2.3.0",
     "electron-redux": "^1.5.2",
+    "express": "^4.17.1",
     "node-version-compare": "^1.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
