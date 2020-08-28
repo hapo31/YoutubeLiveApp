@@ -24,10 +24,10 @@ jobs:
         with:
           node-version: "12.13.1"
       - name: Build
-        run: | 
-          yarn  
-          yarn build
-        
+        run: |
+          yarn
+          yarn build:win
+
       - uses: actions/create-release@v1
         id: create-release
       - name: Create Release
@@ -47,4 +47,4 @@ jobs:
           asset_path: ./YoutubeLiveApp-win32-x64
           assets_name: YoutubeLiveApp-win32-x64.zip
           asset_content_type: application/zip
-          
+
