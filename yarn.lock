@@ -1762,7 +1762,7 @@ debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@3.2.6, debug@^3.0.0, debug@^3.1.0:
+debug@3.2.6, debug@^3.1.0:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
@@ -2010,15 +2010,6 @@ electron-packager@^14.2.1:
     sanitize-filename "^1.6.0"
     semver "^6.0.0"
     yargs-parser "^16.0.0"
-
-electron-redux@^1.5.2:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/electron-redux/-/electron-redux-1.5.2.tgz#a415d4873369957640ed0536fc0641c869ba64f5"
-  integrity sha512-LOX+CdPkkJTUU+JBaVexH6QOmENkRtuhnZjLhpsvm/LjNaMZpfuWRsHGyxxZcIMTV2CIQLH0MXqho6dcKOjc8A==
-  dependencies:
-    debug "^3.0.0"
-    flux-standard-action "^2.0.0"
-    redux "^4.0.1"
 
 electron@^9.0.4:
   version "9.0.4"
@@ -2704,13 +2695,6 @@ flush-write-stream@^1.0.0:
   dependencies:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
-
-flux-standard-action@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/flux-standard-action/-/flux-standard-action-2.1.1.tgz#b2e204145ea8e4294d6b0f178d8e8c416802948f"
-  integrity sha512-W86GzmXmIiTVq/dpYVd2HtTIUX9c35Iq3ao3xR6qcKtuXgbu+BDEj72op5VnEIe/kpuSbhl+I8kT1iS2hpcusw==
-  dependencies:
-    lodash "^4.17.15"
 
 for-in@^1.0.2:
   version "1.0.2"
