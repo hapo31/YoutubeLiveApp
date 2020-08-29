@@ -51,10 +51,11 @@ type styledProps = {
 };
 
 const Container = styled.div`
-  box-shadow: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "0 0 0 3px blue" : "none")};
+  box-shadow: ${({ isBordered }: { isBordered: boolean }) => (isBordered ? "0 0 0 3px white" : "none")};
   margin: 8px;
   :hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.75);
+    transition: 0.2s;
   }
   > img {
     height: 24px;
@@ -82,9 +83,6 @@ const Wrapper = styled.div`
 
 const Name = styled.div`
   color: ${(props: styledProps) => props.color};
-  :hover {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
 `;
 
 const Purches = styled.div`
@@ -97,9 +95,6 @@ const Message = styled.div`
   align-items: center;
   background-color: ${(props: styledProps) => props.backgroundColor};
   color: ${(props: styledProps) => props.color};
-  :hover {
-    background-color: rgba(0, 0, 0, 0.3);
-  }
 
   > img {
     width: 24px;

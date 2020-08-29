@@ -56,8 +56,7 @@ export default function buildMenu() {
             },
           },
           {
-            label: "スパチャ一覧を開く",
-            enabled: App.videoId !== null,
+            label: "スーパーチャット一覧を開く",
             click: (__item: unknown, mainWindow: BrowserWindow) => {
               const childs = mainWindow.getChildWindows();
               if (childs.length >= 1) {

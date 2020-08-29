@@ -127,6 +127,7 @@ class MyApp {
     console.log({ state });
     const windowOption: Electron.BrowserWindowConstructorOptions = {
       title: "YouTubeLiveApp",
+      backgroundColor: "#282828",
       acceptFirstMouse: true,
       width: 1400,
       height: 900,
