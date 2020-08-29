@@ -13,7 +13,20 @@ export default function buildMenu() {
   return {
     mainMenuTemplate: Menu.buildFromTemplate([
       {
-        label: "ページ移動(1)",
+        label: "更新",
+        accelerator: "F5",
+        click: (__item, window) => {
+          window.reload();
+        },
+      },
+      {
+        label: "チャットウインドウのURLをクリップボードにコピー",
+        click: () => {
+          copyPast.copy(`https://www.youtube.com/live_chat?is_popout=1&v=${App.videoId}`);
+        },
+      },
+      {
+        label: "ページ移動...",
         submenu: [
           {
             label: "ライブ配信 - YouTube Studio (Ctrl+1)",
@@ -29,17 +42,10 @@ export default function buildMenu() {
               focusedWindow.loadURL(`https://studio.youtube.com/channel/${App.channelId}/`);
             },
           },
-          {
-            label: "更新",
-            accelerator: "CmdOrCtrl+R",
-            click: (__item, window) => {
-              window.reload();
-            },
-          },
         ],
       },
       {
-        label: "ツール(2)",
+        label: "その他...",
         submenu: [
           {
             label: "常に最前面に表示",
@@ -50,13 +56,8 @@ export default function buildMenu() {
             },
           },
           {
-            label: "チャットウインドウのURLをクリップボードにコピー",
-            click: () => {
-              copyPast.copy(`https://www.youtube.com/live_chat?is_popout=1&v=${App.videoId}`);
-            },
-          },
-          {
             label: "スパチャ一覧を開く",
+            enabled: App.videoId !== null,
             click: (__item: unknown, mainWindow: BrowserWindow) => {
               const childs = mainWindow.getChildWindows();
               if (childs.length >= 1) {
@@ -121,7 +122,7 @@ export default function buildMenu() {
         ],
       },
       {
-        label: "About",
+        label: "about...",
         submenu: [
           { label: `現在のバージョン: ${App.version}`, enabled: false },
           {
