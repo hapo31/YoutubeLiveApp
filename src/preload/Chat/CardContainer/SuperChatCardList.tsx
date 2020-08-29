@@ -32,7 +32,7 @@ const Container = styled.div`
 `;
 
 const ChatCardContainer = styled.div`
-  margin-top: 30px;
+  margin-top: 50px;
   margin-bottom: 20px;
 `;
 
@@ -63,8 +63,7 @@ const SuperChatRemainCountContainer = styled.div`
 `;
 
 const SuperChatRemainCount = styled.div`
-  padding: 0px 10px;
-  margin-bottom: 5px;
+  padding: 1px 10px;
   color: #212121;
   border-radius: 16px;
   background-color: aquamarine;
