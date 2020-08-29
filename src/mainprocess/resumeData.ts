@@ -1,4 +1,4 @@
-import { readFileSync, mkdirSync } from "fs";
+import { readFileSync, mkdirSync, writeFileSync } from "fs";
 import createInitialState from "./getInitialState";
 import { SuperChatInfo } from "@common/AppState/AppState";
 
@@ -8,13 +8,13 @@ export type AppConfig = {
 
 type SaveData = {
   nowUrl: string;
-  channelId: string;
   superChats: Record<string, SuperChatInfo[]>;
+  isAlwaysOnTop: boolean;
 };
 
 const appStateFilePath = ".save/app.json";
 
-export default function resumeData() {
+export function resumeData(): SaveData {
   try {
     const recentState = JSON.parse(readFileSync(appStateFilePath).toString("utf-8")) as SaveData;
     return recentState;
@@ -24,6 +24,11 @@ export default function resumeData() {
     } catch (e) {
       /* NOP */
     }
-    return createInitialState("https://studio.youtube.com/");
+    return { ...createInitialState("https://studio.youtube.com/"), isAlwaysOnTop: false };
   }
+}
+
+export function writeData(data: SaveData) {
+  const JSONstring = JSON.stringify(data);
+  writeFileSync(appStateFilePath, JSONstring);
 }

@@ -12,7 +12,7 @@ import IPCEvent from "@common/events/IPCEvent";
 import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
-import resumeData from "./resumeData";
+import { resumeData, writeData } from "./resumeData";
 import { ChatState, initialState as chatInitialState } from "@common/Chat/ChatState";
 import { Actions as ChatStateActions, InitChat } from "@common/Chat/ChatStateActions";
 import createChatReducer from "@common/Chat/ChatStateReducer";
@@ -98,6 +98,7 @@ class MyApp {
     this.version = packageJsonObject.version;
 
     const initialState = resumeData();
+    this.isAlwaysOnTop = !!initialState.isAlwaysOnTop;
     const reducer = combineReducers({ app: createAppReducer(initialState), chat: createChatReducer(chatInitialState) });
 
     const myCreateStore = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
@@ -107,6 +108,7 @@ class MyApp {
 
   public createWindow(id: string, windowOption?: Electron.BrowserWindowConstructorOptions) {
     const window = new BrowserWindow(windowOption);
+    window.setAlwaysOnTop(this.isAlwaysOnTop);
     window.addListener("closed", () => {
       this.childWindows.delete(id);
     });
@@ -146,8 +148,6 @@ class MyApp {
     if (isDebug) {
       this.mainWindow.webContents.openDevTools();
     }
-
-    this.isAlwaysOnTop = true;
 
     this.mainWindow.loadURL(this.store.getState().app.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
@@ -235,8 +235,7 @@ class MyApp {
 
   private saveAppData() {
     const { app: state } = this.store.getState();
-    const JSONstring = JSON.stringify(state);
-    writeFileSync(".save/app.json", JSONstring);
+    writeData({ ...state, isAlwaysOnTop: this.isAlwaysOnTop });
   }
 
   private switchUserAgent(url: string) {
