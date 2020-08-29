@@ -28,9 +28,10 @@ jobs:
           yarn
           yarn build:win
 
-      - uses: actions/create-release@v1
-        id: create-release
+
       - name: Create Release
+        uses: actions/create-release@v1
+        id: create-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
