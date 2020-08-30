@@ -22,7 +22,11 @@ export default function buildMenu() {
       {
         label: "チャットウインドウのURLをクリップボードにコピー",
         click: () => {
-          copyPast.copy(`https://www.youtube.com/live_chat?is_popout=1&v=${App.videoId}`);
+          if (App.serverRunning) {
+            copyPast.copy("http://localhost:25252/chat");
+          } else {
+            copyPast.copy(`https://www.youtube.com/live_chat?is_popout=1&v=${App.videoId}`);
+          }
         },
       },
       {
@@ -53,6 +57,14 @@ export default function buildMenu() {
             checked: App.isAlwaysOnTop,
             click: () => {
               App.isAlwaysOnTop = !App.isAlwaysOnTop;
+            },
+          },
+          {
+            label: "チャットウインドウのURLを固定化",
+            type: "checkbox",
+            checked: App.serverRunning,
+            click: () => {
+              App.serverRunning = !App.serverRunning;
             },
           },
           {

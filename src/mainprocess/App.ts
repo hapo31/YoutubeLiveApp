@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync } from "fs";
 import { BrowserWindow, App, app, ipcMain } from "electron";
 import express from "express";
 import { compose, applyMiddleware, createStore, Action, Store, AnyAction, combineReducers } from "redux";
@@ -12,10 +12,11 @@ import IPCEvent from "@common/events/IPCEvent";
 import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
 import AppState from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
-import { resumeData, writeData } from "./resumeData";
+import { resumeData, writeData } from "./SaveData";
 import { ChatState, initialState as chatInitialState } from "@common/Chat/ChatState";
 import { Actions as ChatStateActions, InitChat } from "@common/Chat/ChatStateActions";
 import createChatReducer from "@common/Chat/ChatStateReducer";
+import { Server } from "http";
 
 export const isDebug = process.env.NODE_ENV == "development";
 export const resoucesBasePath = isDebug ? path.resolve(".", "dist") : path.resolve("resources", "app");
@@ -35,7 +36,7 @@ class MyApp {
 
   private _channelId = "";
 
-  private server: express.Application;
+  private server: Server | null = null;
 
   public get state() {
     return this.store.getState();
@@ -52,6 +53,20 @@ class MyApp {
 
   public get channelId() {
     return this._channelId;
+  }
+
+  private serverPort = 25252;
+
+  public get serverRunning() {
+    return this.server != null;
+  }
+
+  public set serverRunning(value: boolean) {
+    if (value && this.server === null) {
+      this.runServer();
+    } else if (!value && this.server) {
+      this.stopServer();
+    }
   }
 
   private _isAlwaysOnTop = true;
@@ -74,31 +89,12 @@ class MyApp {
 
     const packageJson = fs.readFileSync(packageJsonPath);
     const packageJsonObject = JSON.parse(packageJson.toString("utf-8"));
-    this.server = express();
-
-    this.server.use((req, res, next) => {
-      res.header("Origin", "localhost:25252");
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      next();
-    });
-
-    this.server.get("/chat", (req, res) => {
-      res.status(302);
-      res.header("Location", `https://www.youtube.com/live_chat?is_popout=1&v=${this.videoId}`);
-      res.end();
-    });
-
-    // try {
-    //   this.server.listen(25252);
-    // } catch (e) {
-    //   console.error(e);
-    // }
 
     this.version = packageJsonObject.version;
 
     const initialState = resumeData();
     this.isAlwaysOnTop = !!initialState.isAlwaysOnTop;
+    this.serverRunning = !!initialState.fixedChatUrl;
     const reducer = combineReducers({ app: createAppReducer(initialState), chat: createChatReducer(chatInitialState) });
 
     const myCreateStore = compose(applyMiddleware(MainProcessMiddleware()))(createStore);
@@ -235,7 +231,7 @@ class MyApp {
 
   private saveAppData() {
     const { app: state } = this.store.getState();
-    writeData({ ...state, isAlwaysOnTop: this.isAlwaysOnTop });
+    writeData({ ...state, isAlwaysOnTop: this.isAlwaysOnTop, fixedChatUrl: this.serverRunning });
   }
 
   private switchUserAgent(url: string) {
@@ -245,6 +241,41 @@ class MyApp {
       );
     } else {
       this.mainWindow?.webContents.setUserAgent("Chrome");
+    }
+  }
+
+  private runServer() {
+    const expressApp = express();
+
+    expressApp.use((req, res, next) => {
+      if (req.hostname !== "localhost") {
+        res.status(403);
+        res.end();
+        return;
+      }
+      res.header("Origin", `localhost:${this.serverPort}`);
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      next();
+    });
+
+    expressApp.get("/chat", (req, res) => {
+      res.status(302);
+      res.header("Location", `https://www.youtube.com/live_chat?is_popout=1&v=${this.videoId}`);
+      res.end();
+    });
+
+    try {
+      this.server = expressApp.listen(this.serverPort);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  private stopServer() {
+    if (this.server != null) {
+      this.server.close();
+      this.server = null;
     }
   }
 }
