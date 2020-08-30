@@ -131,7 +131,7 @@ var superchat = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src", "resource", "superchat.html"),
+          from: path.resolve(__dirname, "src", "preload", "Chat", "superchat.html"),
           to: path.resolve(__dirname, outputPath),
         },
       ],
