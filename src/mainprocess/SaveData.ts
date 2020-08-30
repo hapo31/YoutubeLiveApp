@@ -10,6 +10,7 @@ type SaveData = {
   nowUrl: string;
   superChats: Record<string, SuperChatInfo[]>;
   isAlwaysOnTop: boolean;
+  fixedChatUrl: boolean;
 };
 
 const appStateFilePath = ".save/app.json";
@@ -24,7 +25,7 @@ export function resumeData(): SaveData {
     } catch (e) {
       /* NOP */
     }
-    return { ...createInitialState("https://studio.youtube.com/"), isAlwaysOnTop: false };
+    return { ...createInitialState("https://studio.youtube.com/"), isAlwaysOnTop: false, fixedChatUrl: false };
   }
 }
 
