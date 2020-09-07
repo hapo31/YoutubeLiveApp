@@ -30,6 +30,13 @@ export default function createAppReducer(initialState: AppState) {
           ...state,
         };
       }
+
+      case AppStateAction.CHANGE_BOUYOMICHAN_STATE: {
+        return {
+          ...state,
+          bouyomiChanEnabled: action.enabled,
+        };
+      }
     }
 
     return state;

@@ -20,6 +20,7 @@ export type SuperChatInfo = {
 
 type AppState = {
   nowUrl: string;
+  bouyomiChanEnabled: boolean;
   superChats: Record<string, SuperChatInfo[]>;
 };
 

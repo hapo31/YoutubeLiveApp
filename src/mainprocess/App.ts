@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import BouyomiChan from "bouyomi-chan";
 import { readFileSync } from "fs";
 import { BrowserWindow, App, app, ipcMain } from "electron";
 import express from "express";
@@ -69,6 +70,13 @@ class MyApp {
     }
   }
 
+  private readonly bouyomiChanPort = 50001;
+  private bouyomiChan: BouyomiChan;
+
+  public get bouyomiChanEnabled() {
+    return !!this.store.getState().app.bouyomiChanEnabled;
+  }
+
   private _isAlwaysOnTop = true;
 
   public set isAlwaysOnTop(value: boolean) {
@@ -91,6 +99,10 @@ class MyApp {
     const packageJsonObject = JSON.parse(packageJson.toString("utf-8"));
 
     this.version = packageJsonObject.version;
+
+    this.bouyomiChan = new BouyomiChan({
+      port: this.bouyomiChanPort,
+    });
 
     const initialState = resumeData();
     this.isAlwaysOnTop = !!initialState.isAlwaysOnTop;
@@ -222,6 +234,9 @@ class MyApp {
     ipcMain.on(IPCEvent.StateChanged.CHANNEL_NAME_FROM_PRELOAD, (_, action: Action<AppState>) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.store?.dispatch(action as any);
+    });
+    ipcMain.on(IPCEvent.BouyomiChan.SPEAK_BOUYOMICHAN_FROM_PRELOAD, (_, content: string) => {
+      this.bouyomiChan.speak(content);
     });
   }
 

@@ -8,6 +8,7 @@ export type AppConfig = {
 
 type SaveData = {
   nowUrl: string;
+  bouyomiChanEnabled: boolean;
   superChats: Record<string, SuperChatInfo[]>;
   isAlwaysOnTop: boolean;
   fixedChatUrl: boolean;

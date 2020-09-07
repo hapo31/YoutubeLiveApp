@@ -1,6 +1,8 @@
 import { SuperChatInfo } from "../AppState";
 
-export type Actions = ReturnType<typeof ChangeURLAction | typeof AppendSuperchat | typeof RendererInitialize | typeof CheckedSuperchat>;
+export type Actions = ReturnType<
+  typeof ChangeURLAction | typeof AppendSuperchat | typeof RendererInitialize | typeof CheckedSuperchat | typeof ChangeBouyomiChanState
+>;
 
 export const CHANGE_URL = "AppStateAction.CHANGE_URL" as const;
 
@@ -28,4 +30,11 @@ export const CheckedSuperchat = (videoId: string, index: number) => ({
   type: CHECKED_SUPERCHAT,
   videoId,
   index,
+});
+
+export const CHANGE_BOUYOMICHAN_STATE = "AppStateAction.CHANGE_BOUYOMICHAN_STATE" as const;
+
+export const ChangeBouyomiChanState = (enabled: boolean) => ({
+  type: CHANGE_BOUYOMICHAN_STATE,
+  enabled,
 });

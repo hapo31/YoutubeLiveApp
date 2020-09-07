@@ -5,7 +5,7 @@ import copyPast from "copy-paste";
 import path from "path";
 // import contextMenu from "electron-context-menu";
 import App, { isDebug, videoIdParseRegExp } from "./App";
-import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
+import { AppendSuperchat, ChangeBouyomiChanState } from "@common/AppState/Actions/AppStateAction";
 import checkUpdate from "./check-update";
 import openBrowser from "./NativeBridge/OpenBrowser";
 
@@ -65,6 +65,14 @@ export default function buildMenu() {
             checked: App.serverRunning,
             click: () => {
               App.serverRunning = !App.serverRunning;
+            },
+          },
+          {
+            label: "チャットを棒読みちゃんで読み上げる",
+            type: "checkbox",
+            checked: App.bouyomiChanEnabled,
+            click: (__item: unknown, _: BrowserWindow) => {
+              App.dispatch(ChangeBouyomiChanState(!App.bouyomiChanEnabled));
             },
           },
           {
