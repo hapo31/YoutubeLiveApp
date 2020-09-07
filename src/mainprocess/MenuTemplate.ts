@@ -86,6 +86,7 @@ export default function buildMenu() {
                 parent: mainWindow,
                 acceptFirstMouse: true,
                 alwaysOnTop: true,
+                backgroundColor: "#282828",
                 width: 600,
                 minWidth: 600,
                 height: 700,
