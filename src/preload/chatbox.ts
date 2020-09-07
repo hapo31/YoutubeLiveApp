@@ -1,12 +1,14 @@
 import attachChatBox, { checkChatBoxVisible } from "./Chat/attachChatBox";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
-import AppState, { SuperChatInfo } from "@common/AppState/AppState";
+import AppState, { SuperChatInfo, ChatInfo } from "@common/AppState/AppState";
 import createSharedStore, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import createChatReducer from "@common/Chat/ChatStateReducer";
 import { ChatState } from "@common/Chat/ChatState";
 import { AttachChat } from "@common/Chat/ChatStateActions";
 import { combineReducers } from "redux";
+import { ipcRenderer } from "electron";
+import IPCEvent from "@common/events/IPCEvent";
 
 const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livestreaming/;
 
@@ -32,6 +34,11 @@ const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livest
   function init() {
     attachChatBox((element: HTMLElement) => {
       const state = store.getState();
+      if (state.app.bouyomiChanEnabled) {
+        const chat = parseChatElement(element);
+        ipcRenderer.send(IPCEvent.BouyomiChan.SPEAK_BOUYOMICHAN_FROM_PRELOAD, chat);
+      }
+
       if (element.localName !== "yt-live-chat-paid-message-renderer") {
         return;
       }
@@ -44,6 +51,16 @@ const videoIdParseRegExp = /https:\/\/studio\.youtube\.com\/video\/(\w+)\/livest
     });
   }
 })();
+
+function parseChatElement(element: HTMLElement): ChatInfo {
+  const authorElement = element.querySelector("#author-name");
+  const messageElement = element.querySelector("#message");
+
+  const author = authorElement?.textContent || "";
+  const message = messageElement?.textContent || "";
+
+  return { author, message };
+}
 
 function parseSuperChatElement(element: HTMLElement): SuperChatInfo {
   const img = element.querySelector("#img") as HTMLImageElement;

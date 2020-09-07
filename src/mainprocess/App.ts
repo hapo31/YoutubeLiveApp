@@ -11,7 +11,7 @@ import MainProcessMiddleware from "@common/Middlewares/MainProcessMiddleware";
 import createAppReducer from "@common/AppState/AppStateReducer";
 import IPCEvent from "@common/events/IPCEvent";
 import { Actions as AppStateAction, ChangeURLAction } from "@common/AppState/Actions/AppStateAction";
-import AppState from "@common/AppState/AppState";
+import AppState, { ChatInfo } from "@common/AppState/AppState";
 import openBrowser from "./NativeBridge/OpenBrowser";
 import { resumeData, writeData } from "./SaveData";
 import { ChatState, initialState as chatInitialState } from "@common/Chat/ChatState";
@@ -235,8 +235,8 @@ class MyApp {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       this.store?.dispatch(action as any);
     });
-    ipcMain.on(IPCEvent.BouyomiChan.SPEAK_BOUYOMICHAN_FROM_PRELOAD, (_, content: string) => {
-      this.bouyomiChan.speak(content);
+    ipcMain.on(IPCEvent.BouyomiChan.SPEAK_BOUYOMICHAN_FROM_PRELOAD, (_, chatInfo: ChatInfo) => {
+      this.bouyomiChan.speak(`${chatInfo.author} ${chatInfo.message}`);
     });
   }
 

@@ -7,6 +7,11 @@ type SuperChatColorInfo = {
   message: string;
 };
 
+export type ChatInfo = {
+  message: string;
+  author: string;
+};
+
 export type SuperChatInfo = {
   imgUrl: string;
   purches: string;
