@@ -1012,6 +1012,11 @@ boolean@^3.0.0, boolean@^3.0.1:
   resolved "https://registry.yarnpkg.com/boolean/-/boolean-3.0.1.tgz#35ecf2b4a2ee191b0b44986f14eb5f052a5cbb4f"
   integrity sha512-HRZPIjPcbwAVQvOTxR4YE3o8Xs98NqbbL1iEZDCz7CL8ql0Lt5iOyJFxfnAB0oFs8Oh02F/lLlg30Mexv46LjA==
 
+bouyomi-chan@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/bouyomi-chan/-/bouyomi-chan-1.0.0.tgz#175281c7633ce8ab1a805a8ef53dba8b87e7895a"
+  integrity sha512-SVdAmxDubOr8lZG7eMoB+T851MQcy9bgLNk15qasgzNWwIRuRHfy7E6YSWJ5szOf3yJUS/taudQ6LRsaQK8S+Q==
+
 brace-expansion@^1.1.7:
   version "1.1.11"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.11.tgz#3c7fcbf529d87226f3d2f52b966ff5271eb441dd"

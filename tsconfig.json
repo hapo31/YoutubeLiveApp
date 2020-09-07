@@ -38,6 +38,7 @@
     "baseUrl": "." /* Base directory to resolve non-absolute module names. */ ,
     "paths": {
       "node-version-compare":["./types/node-version-compare/"],
+      "bouyomi-chan": ["./types/bouyomi-chan/"],
       "@common/*": [
         "./src/common/*"
       ],
