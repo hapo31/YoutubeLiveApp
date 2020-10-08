@@ -104,7 +104,7 @@ var superchat = {
   mode: isDev ? "development" : "production",
   target: "electron-preload",
   devtool: isDev ? "source-map" : false,
-  entry: path.join(__dirname, "src", "preload", "superchat"),
+  entry: path.join(__dirname, "src", "preload", "SuperChat", "superchat"),
   output: {
     filename: "superchat.js",
     path: path.resolve(outputPath, "scripts"),
@@ -131,7 +131,7 @@ var superchat = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: path.resolve(__dirname, "src", "preload", "Chat", "superchat.html"),
+          from: path.resolve(__dirname, "src", "preload", "SuperChat", "superchat.html"),
           to: path.resolve(__dirname, outputPath),
         },
       ],
@@ -139,4 +139,43 @@ var superchat = {
   ],
 };
 
-module.exports = [main, preload, chatbox, superchat];
+var setting = {
+  mode: isDev ? "development" : "production",
+  target: "electron-preload",
+  devtool: isDev ? "source-map" : false,
+  entry: path.join(__dirname, "src", "preload", "setting", "setting"),
+  output: {
+    filename: "setting.js",
+    path: path.resolve(outputPath, "scripts"),
+  },
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+  module: {
+    rules: [
+      {
+        test: /.tsx?$/,
+        include: [path.resolve(__dirname, "src")],
+        exclude: [path.resolve(__dirname, "node_modules")],
+        loader: "ts-loader",
+      },
+    ],
+  },
+  resolve: {
+    extensions: resolveExt,
+    plugins: [new TsconfigPathsPlugin({ configFile: tsconfigPath })],
+  },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, "src", "preload", "Setting", "setting.html"),
+          to: path.resolve(__dirname, outputPath),
+        },
+      ],
+    }),
+  ],
+};
+
+module.exports = [main, preload, chatbox, superchat, setting];

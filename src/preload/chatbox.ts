@@ -1,4 +1,4 @@
-import attachChatBox, { checkChatBoxVisible } from "./Chat/attachChatBox";
+import attachChatBox, { checkChatBoxVisible } from "./SuperChat/attachChatBox";
 import { AppendSuperchat } from "@common/AppState/Actions/AppStateAction";
 import AppState, { SuperChatInfo, ChatInfo } from "@common/AppState/AppState";
 import createSharedStore, { requestInitialState } from "@common/Middlewares/WebcontentsPreloadMiddleware";
