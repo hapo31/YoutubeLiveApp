@@ -143,7 +143,7 @@ var setting = {
   mode: isDev ? "development" : "production",
   target: "electron-preload",
   devtool: isDev ? "source-map" : false,
-  entry: path.join(__dirname, "src", "preload", "setting", "setting"),
+  entry: path.join(__dirname, "src", "preload", "Setting", "setting"),
   output: {
     filename: "setting.js",
     path: path.resolve(outputPath, "scripts"),
