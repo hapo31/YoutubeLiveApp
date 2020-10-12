@@ -10,3 +10,5 @@ YoutubeLiveApp-*
 !.save/.gitkeep
 
 index.html
+
+client_id.json
