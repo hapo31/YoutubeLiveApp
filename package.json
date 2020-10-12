@@ -5,7 +5,7 @@
   "description": "app for youtube live console.",
   "main": "index.js",
   "engines": {
-    "node": "12.13.x"
+    "node": "12.x"
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development electron ./dist",
