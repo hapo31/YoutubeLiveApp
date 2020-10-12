@@ -1,7 +1,9 @@
 {
   "editor.formatOnSave": true,
-  "eslint.enable": true,
   "eslint.codeActionsOnSave.mode": "problems",
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "mochaExplorer.mochaPath": "./node_modules/.bin/mocha -r tsconfig-paths/register -r ts-node/register"
 }
