@@ -158,8 +158,6 @@ class MyApp {
 
     this.mainWindow.loadURL(this.store.getState().app.nowUrl);
     this.mainWindow.setMenu(menus.mainMenuTemplate);
-    const chatboxJSCode = this.loadJSCode(path.resolve(resoucesBasePath, "scripts", "chatbox.js"));
-    this.mainWindow?.webContents.executeJavaScript(chatboxJSCode);
 
     const willChangePageHanlder = (_event: Electron.Event, url: string) => {
       if (url === "https://www.youtube.com/") {
@@ -190,6 +188,23 @@ class MyApp {
         if (!chat.attached) {
           const videoId = videoIdResult[1];
           this.store.dispatch(InitChat(videoId));
+          if (!this.childWindows.has(`chat-${videoId}`)) {
+            const window = this.createWindow(`chat-${videoId}`, {
+              title: `chat-${videoId}`,
+              opacity: isDebug ? 1 : 0,
+              skipTaskbar: true,
+              webPreferences: {
+                nodeIntegration: true,
+              },
+            });
+            window.loadURL(`https://www.youtube.com/live_chat?is_popout=1&v=${videoId}`);
+            window.setMenu(null);
+            const chatboxJSCode = this.loadJSCode(path.resolve(resoucesBasePath, "scripts", "chatbox.js"));
+            window.webContents.executeJavaScript(chatboxJSCode);
+            if (isDebug) {
+              window.webContents.openDevTools();
+            }
+          }
         }
       }
       console.log({ url });
@@ -217,10 +232,9 @@ class MyApp {
 
   private webContentsOnNewWindow = () => {
     return (event: Electron.NewWindowEvent, url: string) => {
-      event.preventDefault();
-
       // 開こうとしているURLが外部だったらブラウザで開く
       if (!/^https?:\/\/(studio|www)\.youtube.com/.test(url)) {
+        event.preventDefault();
         openBrowser(url);
         return;
       }
