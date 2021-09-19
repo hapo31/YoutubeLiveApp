@@ -1,3 +1,8 @@
+# NOTE
+本リポジトリはYoutubeLive側の仕様変更に追従できなくなったためアーカイブします。  
+今後は、同等の機能をChrome拡張として実装することを目指した以下のプロジェクトに注力します。
+[YouTubeLiveHelper](https://github.com/hapo31/YouTubeLiveHelper)
+
 # YTLH - YouTubeLiveHelper
 
 このツールはYouTube Liveを楽にするための機能を詰め込んだサポートツールです。
